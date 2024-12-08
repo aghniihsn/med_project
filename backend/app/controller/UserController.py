@@ -15,7 +15,7 @@ def buatAdmin():
 
         Users = User(name=name, email=email, level=level)
         Users.setPassword(password)
-        db.session.add(users)
+        db.session.add(Users)
         db.session.commit()
 
         return response.succes('','Succes Menambahkan Data Admin!')

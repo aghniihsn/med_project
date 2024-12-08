@@ -1,5 +1,5 @@
 from app import app
-from app.controller.UserController import UserController
+from app.controller import UserController
 
 @app.route('/')
 def index():
