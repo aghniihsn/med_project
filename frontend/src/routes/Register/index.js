@@ -1,14 +1,11 @@
 import React from 'react';
 import { Form, Input, Button, Typography } from 'antd';
-import { useNavigate } from 'react-router-dom';
 
-const { Title, Link } = Typography;
+const { Title } = Typography;
 
-function Login() {
-  const navigate = useNavigate
+export default function Register() {
   const onFinish = (values) => {
     console.log("Success:", values);
-    navigate("/dashboard")
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -35,8 +32,7 @@ function Login() {
           minWidth: "300px",
         }}
       >
-        <Title level={2}>Welcome back</Title>
-        <p>Please enter your details</p>
+        <Title level={2}>Welcome!</Title>
 
         <Form
           name="login"
@@ -46,7 +42,14 @@ function Login() {
           onFinishFailed={onFinishFailed}
           style={{ width: "100%", maxWidth: "350px" }}
         >
-          <Form.Item
+        <Form.Item
+            label="Name"
+            name="name"
+        >
+            <Input placeholder="Restu Agis" />
+        </Form.Item>
+
+        <Form.Item
             label="Email address"
             name="email"
             rules={[
@@ -58,6 +61,13 @@ function Login() {
           </Form.Item>
 
           <Form.Item
+            label="Phone Number"
+            name="no_telp"
+        >
+            <Input placeholder="0815262718191" />
+        </Form.Item>
+
+          <Form.Item
             label="Password"
             name="password"
             rules={[
@@ -67,17 +77,6 @@ function Login() {
             <Input.Password placeholder="Enter your password" />
           </Form.Item>
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "16px",
-            }}
-          >
-            <Link>Forgot password</Link>
-          </div>
-
           <Form.Item>
             <Button
               type="primary"
@@ -85,13 +84,13 @@ function Login() {
               block
               style={{ marginBottom: "16px", backgroundColor: "#997C70" }}
             >
-              Sign in
+              Sign Up
             </Button>
           </Form.Item>
         </Form>
 
         <p style={{ marginTop: "16px" }}>
-          Don’t have an account? <a href="/register">Sign up</a>
+          Ohh you have an account? <a href="/login">Sign in</a>
         </p>
       </div>
 
@@ -117,5 +116,3 @@ function Login() {
     </div>
   );
 }
-
-export default Login
