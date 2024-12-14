@@ -1,60 +1,98 @@
 import React from 'react';
-import { Form, Input, Button, Typography } from 'antd';
+import { useNavigate } from 'react-router-dom';
+
+import { Form, Input, Button, Typography, message } from 'antd';
 
 const { Title } = Typography;
 
 export default function Register() {
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
+  const navigate = useNavigate();
+
+  const onFinish = async (values) => {
+    const payload = {
+        name: values.name,
+        email: values.email,
+        phone_number: values.no_telp, // Pastikan key cocok dengan backend
+        password: values.password,
+    };
+
+    try {
+        const response = await fetch('http://127.0.0.1:5000/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            message.success(result.message || 'Registration successful!');
+            if (result.token) {
+                localStorage.setItem('access_token', result.token);
+            }
+            navigate('/login');
+          } else {
+            message.error(result.error || 'Registration failed.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        message.error('Something went wrong!');
+    }
+};
+
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+    console.log('Failed:', errorInfo);
   };
 
   return (
     <div
       style={{
-        display: "flex",
-        flexWrap: "wrap",
-        minHeight: "100vh",
+        display: 'flex',
+        flexWrap: 'wrap',
+        minHeight: '100vh',
       }}
     >
       <div
         style={{
           flex: 1,
-          backgroundColor: "#FDF7F4",
-          padding: "50px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          minWidth: "300px",
+          backgroundColor: '#FDF7F4',
+          padding: '50px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minWidth: '300px',
         }}
       >
         <Title level={2}>Welcome!</Title>
 
         <Form
-          name="login"
+          name="register"
           layout="vertical"
           initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-          style={{ width: "100%", maxWidth: "350px" }}
+          style={{ width: '100%', maxWidth: '350px' }}
         >
-        <Form.Item
+          <Form.Item
             label="Name"
             name="name"
-        >
+            rules={[
+              { required: true, message: 'Please input your name!' },
+            ]}
+          >
             <Input placeholder="Restu Agis" />
-        </Form.Item>
+          </Form.Item>
 
-        <Form.Item
+          <Form.Item
             label="Email address"
             name="email"
             rules={[
-              { required: true, message: "Please input your email!" },
-              { type: "email", message: "Please enter a valid email!" },
+              { required: true, message: 'Please input your email!' },
+              { type: 'email', message: 'Please enter a valid email!' },
             ]}
           >
             <Input placeholder="Enter your email" />
@@ -63,15 +101,18 @@ export default function Register() {
           <Form.Item
             label="Phone Number"
             name="no_telp"
-        >
+            rules={[
+              { required: true, message: 'Please input your phone number!' },
+            ]}
+          >
             <Input placeholder="0815262718191" />
-        </Form.Item>
+          </Form.Item>
 
           <Form.Item
             label="Password"
             name="password"
             rules={[
-              { required: true, message: "Please input your password!" },
+              { required: true, message: 'Please input your password!' },
             ]}
           >
             <Input.Password placeholder="Enter your password" />
@@ -82,14 +123,14 @@ export default function Register() {
               type="primary"
               htmlType="submit"
               block
-              style={{ marginBottom: "16px", backgroundColor: "#997C70" }}
+              style={{ marginBottom: '16px', backgroundColor: '#997C70' }}
             >
               Sign Up
             </Button>
           </Form.Item>
         </Form>
 
-        <p style={{ marginTop: "16px" }}>
+        <p style={{ marginTop: '16px' }}>
           Ohh you have an account? <a href="/login">Sign in</a>
         </p>
       </div>
@@ -97,18 +138,18 @@ export default function Register() {
       <div
         style={{
           flex: 1,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "50px",
-          minWidth: "300px",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '50px',
+          minWidth: '300px',
         }}
       >
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: 'center' }}>
           <img
             src="image/medicine.gif"
             alt="reminder"
-            style={{ width: "100%", maxWidth: "400px" }}
+            style={{ width: '100%', maxWidth: '400px' }}
           />
           <p>Set your Time to take your medication on Time!</p>
         </div>
