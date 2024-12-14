@@ -5,10 +5,42 @@ import { useNavigate } from 'react-router-dom';
 const { Title, Link } = Typography;
 
 function Login() {
-  const navigate = useNavigate
-  const onFinish = (values) => {
-    console.log("Success:", values);
-    navigate("/dashboard")
+  const navigate = useNavigate();
+
+  const onFinish = async (values) => {
+    const payload = {
+      name: values.name,
+      email: values.email,
+      phone_number: values.phone_number,
+      password: values.password,
+  };  
+    try {
+        console.log("Sending data:", values);
+        const response = await fetch("http://localhost:5000/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+        console.log("Response:", result);
+
+        if (response.ok) {
+            console.log("Login successful:", result);
+            localStorage.setItem("access_token", result.access_token);
+            localStorage.setItem("refresh_token", result.refresh_token);
+            
+            navigate("/dashboard");
+        } else {
+            console.error("Login failed:", result);
+            alert(result.message || "Login failed!");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong. Please try again.");
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -118,4 +150,4 @@ function Login() {
   );
 }
 
-export default Login
+export default Login;
