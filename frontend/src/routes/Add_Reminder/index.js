@@ -1,13 +1,18 @@
 import React from "react";
-import { Layout, Menu, Typography, Input, Button, Row, Col } from "antd";
-import { CalendarOutlined } from "@ant-design/icons";
-const { Header, Content, Footer } = Layout;
-const { Title, Text } = Typography;
+import { Form, Input, Button, DatePicker, TimePicker, Row, Col, Layout, Menu } from "antd";
+import "./style.css";
 
-export default function Add_Reminder() {
+const { TextArea } = Input;
+const { Header, Content, Footer } = Layout;
+
+function AddReminder(){
+  
+  function onFinish(values){
+    console.log("Form Values:", values);   
+  }
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      {/* Navbar */}
       <Header
         style={{
           display: "flex",
@@ -26,34 +31,61 @@ export default function Add_Reminder() {
           <Menu.Item key="3">Logout</Menu.Item>
         </Menu>
       </Header>
+      <Content>
+        <div className="add-reminder-container">
+          <h1 className="title">Atur Jadwal Minum Obat</h1>
+          <Form layout="vertical" onFinish={onFinish} className="form-container">
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Drug Name"
+                  name="drug_name"
+                  rules={[{ required: true, message: "Please enter the drug name" }]}
+                >
+                  <Input placeholder="Drug Name" />
+                </Form.Item>
+                <Form.Item
+                  label="Description of Use"
+                  name="description"
+                  rules={[{ required: true, message: "Please enter the description" }]}
+                >
+                  <TextArea placeholder="Description of Use" rows={4} />
+                </Form.Item>
+              </Col>
 
-      {/* Main Content */}
-      <Row gutter={[32, 32]}>
-      <Col xs={24} sm={12} md={8}>
-      <Content style={{ padding: "50px", backgroundColor: "#f9f9f9" }}>
-        <div style={{ marginBottom: "50px" }}>
-          <Title level={2}>Atur Jadwal Minum Obat</Title>
-          
-            <Input placeholder="Drug Name" style={{ borderColor: "#ff4d4f", marginBottom: "20px" }} />
-            <Input.TextArea
-              placeholder="Description of Use"
-              rows={4}
-              style={{ borderColor: "#ff4d4f", marginBottom: "20px" }}
-            />
-            <Button type="primary" style={{ backgroundColor: "#ff4d4f", borderColor: "#ff4d4f", marginRight: "10px" }}>
+              <Col span={12}>
+                <Form.Item
+                  label="Time"
+                  name="time"
+                  rules={[{ required: true, message: "Please select time" }]}
+                >
+                  <TimePicker format={"HH:mm"} style={{ width: "100%" }} />
+                </Form.Item>
+                <Form.Item
+                  label="Date Range"
+                  name="date_range"
+                  rules={[{ required: true, message: "Please select date range" }]}
+                >
+                  <DatePicker.RangePicker style={{ width: "100%" }} format={"DD/MM/YYYY"} />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Form.Item className="button-group">
+              <Button type="primary" htmlType="submit" className="save-button">
                 Save
               </Button>
-              <Button style={{ borderColor: "#ff4d4f" }}>Cancel</Button>
-            
-            </div>
+              <Button htmlType="button" className="cancel-button">
+                Cancel
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
       </Content>
-      </Col>
-     </Row>
-
-      {/* Footer */}
       <Footer style={{ textAlign: "center" }}>
         ©2024 ReminderApp - Keep Track of Your Medication
       </Footer>
     </Layout>
   );
 }
+export default AddReminder;

@@ -5,7 +5,7 @@ import { Form, Input, Button, Typography, message } from 'antd';
 
 const { Title } = Typography;
 
-export default function Register() {
+function Register() {
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
@@ -157,3 +157,4 @@ export default function Register() {
     </div>
   );
 }
+export default Register

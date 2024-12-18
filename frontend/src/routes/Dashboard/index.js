@@ -1,5 +1,6 @@
 import React from "react";
-import { Layout, Menu, Row, Col, Typography } from "antd";
+import { useNavigate } from 'react-router-dom';
+import { Layout, Menu, Row, Col } from "antd";
 import {
   PlusCircleOutlined,
   ScheduleOutlined,
@@ -7,12 +8,16 @@ import {
 } from "@ant-design/icons";
 
 const { Header, Content, Footer } = Layout;
-const { Title, Text } = Typography;
 
-export default function Dashboard() {
+function Dashboard() {
+    const navigate = useNavigate();
+
+  function handleClick(){
+    navigate('/add')
+  }
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      {/* Navbar */}
       <Header
         style={{
           display: "flex",
@@ -32,21 +37,18 @@ export default function Dashboard() {
         </Menu>
       </Header>
 
-      {/* Main Content */}
       <Content style={{ padding: "50px", backgroundColor: "#f9f9f9" }}>
         <div style={{ textAlign: "center", marginBottom: "50px" }}>
-          <Title level={2}>Hello, name!</Title>
-          <Text>
+          <h1 level={2}>Hello, name!</h1>
+          <p>
             Jangan khawatir soal waktu, cukup atur jadwalmu dan biarkan kami
             mengingatkanmu!
-          </Text>
+          </p>
         </div>
 
-        {/* Features */}
         <Row gutter={[32, 32]} justify="center">
-          {/* Add Reminder */}
           <Col xs={24} sm={12} md={8} style={{ textAlign: "center" }}>
-            <div>
+            <div onClick={handleClick}>
               <PlusCircleOutlined
                 style={{
                   fontSize: "48px",
@@ -56,12 +58,11 @@ export default function Dashboard() {
                   padding: "10px",
                 }}
               />
-              <Title level={4}>Add Reminder</Title>
-              <Text>Tambah pengingat baru, biar nggak lupa!</Text>
+              <h2 >Add Reminder</h2>
+              <p>Tambah pengingat baru, biar nggak lupa!</p>
             </div>
           </Col>
 
-          {/* Check Schedule */}
           <Col xs={24} sm={12} md={8} style={{ textAlign: "center" }}>
             <div>
               <ScheduleOutlined
@@ -73,12 +74,11 @@ export default function Dashboard() {
                   padding: "10px",
                 }}
               />
-              <Title level={4}>Check Schedule</Title>
-              <Text>Cek jadwal obatmu!</Text>
+              <h2>Check Schedule</h2>
+              <p>Cek jadwal obatmu!</p>
             </div>
           </Col>
 
-          {/* Records */}
           <Col xs={24} sm={12} md={8} style={{ textAlign: "center" }}>
             <div>
               <FileTextOutlined
@@ -90,17 +90,17 @@ export default function Dashboard() {
                   padding: "10px",
                 }}
               />
-              <Title level={4}>Records</Title>
-              <Text>Lihat history minum obat!</Text>
+              <h2>Records</h2>
+              <p>Lihat history minum obat!</p>
             </div>
           </Col>
         </Row>
       </Content>
 
-      {/* Footer */}
       <Footer style={{ textAlign: "center" }}>
         ©2024 ReminderApp - Keep Track of Your Medication
       </Footer>
     </Layout>
   );
 }
+export default Dashboard
