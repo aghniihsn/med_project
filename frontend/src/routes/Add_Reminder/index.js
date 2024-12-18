@@ -1,14 +1,19 @@
 import React from "react";
 import { Form, Input, Button, DatePicker, TimePicker, Row, Col, Layout, Menu } from "antd";
+import { useNavigate } from 'react-router-dom';
 import "./style.css";
 
 const { TextArea } = Input;
 const { Header, Content, Footer } = Layout;
 
 function AddReminder(){
-  
+  const navigate = useNavigate();
   function onFinish(values){
     console.log("Form Values:", values);   
+  }
+
+  function cancelBtn(){
+    navigate('/dashboard')
   }
 
   return (
@@ -75,7 +80,7 @@ function AddReminder(){
               <Button type="primary" htmlType="submit" className="save-button">
                 Save
               </Button>
-              <Button htmlType="button" className="cancel-button">
+              <Button htmlType="button" className="cancel-button" onClick={cancelBtn}>
                 Cancel
               </Button>
             </Form.Item>
