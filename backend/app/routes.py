@@ -1,3 +1,4 @@
+from flask import request
 from app import app
 from app.controller import UserController
 from app.controller.UserController import registerUser
@@ -16,6 +17,13 @@ def register():
 def logins():
     return UserController.login()
 
-@app.route('/reminder', methods=['GET'])
-def reminder():
-    return ReminderController.index()
+@app.route('/reminder', methods=['GET', 'POST'])
+def reminder(): 
+    if request.method == 'GET':
+        return ReminderController.index()
+    else:
+        return ReminderController.save()
+    
+# @app.route('/reminder/<id>', methods=['GET'])
+# def reminderDetail(id):
+#     return ReminderController.detail(id)
