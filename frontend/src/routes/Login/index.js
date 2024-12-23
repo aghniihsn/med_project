@@ -29,8 +29,8 @@ function Login() {
 
         if (response.ok) {
             console.log("Login successful:", result);
-            localStorage.setItem("access_token", result.access_token);
-            localStorage.setItem("refresh_token", result.refresh_token);
+            localStorage.setItem("access_token", result.data.access_token);
+            localStorage.setItem("refresh_token", result.data.refresh_token);
             
             navigate("/dashboard");
         } else {

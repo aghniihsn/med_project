@@ -18,24 +18,6 @@ function AddReminder(){
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: "#fff",
-          borderBottom: "1px solid #f0f0f0",
-        }}
-      >
-        <div style={{ fontWeight: "bold", fontSize: "20px", color: "#333" }}>
-          ReminderApp
-        </div>
-        <Menu mode="horizontal" style={{ borderBottom: "none" }}>
-          <Menu.Item key="1">Home</Menu.Item>
-          <Menu.Item key="2">Profile</Menu.Item>
-          <Menu.Item key="3">Logout</Menu.Item>
-        </Menu>
-      </Header>
       <Content>
         <div className="add-reminder-container">
           <h1 className="title">Atur Jadwal Minum Obat</h1>

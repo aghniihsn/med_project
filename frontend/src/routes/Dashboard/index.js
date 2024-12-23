@@ -10,10 +10,14 @@ import {
 const { Header, Content, Footer } = Layout;
 
 function Dashboard() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  function handleClick(){
+  function handleClickAdd(){
     navigate('/add')
+  }
+
+  function handleClickCheck(){
+    navigate('/check-schedule')
   }
 
   return (
@@ -48,7 +52,7 @@ function Dashboard() {
 
         <Row gutter={[32, 32]} justify="center">
           <Col xs={24} sm={12} md={8} style={{ textAlign: "center" }}>
-            <div onClick={handleClick}>
+            <div onClick={handleClickAdd}>
               <PlusCircleOutlined
                 style={{
                   fontSize: "48px",
@@ -64,7 +68,7 @@ function Dashboard() {
           </Col>
 
           <Col xs={24} sm={12} md={8} style={{ textAlign: "center" }}>
-            <div>
+            <div onClick={handleClickCheck}>
               <ScheduleOutlined
                 style={{
                   fontSize: "48px",

@@ -1,34 +1,17 @@
 from app.model.user import User
+from flask_jwt_extended import jwt_required, verify_jwt_in_request, get_jwt_identity, create_access_token, create_refresh_token
 
 from app import response, app, db
 from flask import request
 from flask_jwt_extended import *
 
-import datetime
-
-# def buatAdmin():
-#     try :
-#         name = request.form.get('name')
-#         email = request.form.get('email')
-#         password = request.form.get('password')
-#         level = 1 
-
-#         Users = User(name=name, email=email, level=level)
-#         Users.setPassword(password)
-#         db.session.add(Users)
-#         db.session.commit()
-
-#         return response.success('','Success Menambahkan Data Admin!')
-#     except Exception as e:
-#         print(e)
-        
+import datetime   
 
 def singleObject(data):
     data = {
         'id' : data.id,
         'name' : data.name,
         'email' : data.email,
-        # 'level' : data.level
     }
 
     return data
@@ -67,6 +50,17 @@ def login():
     except Exception as e:
         print(e)
         return response.error([], "Gagal Login")
+    
+@jwt_required()  # Validasi token otomatis
+def get_user_by_token():
+    try:
+        current_user = get_jwt_identity()  # Ambil data user dari token
+        if not current_user:
+            return response.BadRequest([], "Token tidak valid atau user tidak ditemukan")
+        return response.success(current_user, "Token valid")
+    except Exception as e:
+        print(e)
+        return response.error([], "Gagal memvalidasi token")
 
 def registerUser():
     try:
