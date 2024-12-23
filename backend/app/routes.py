@@ -24,6 +24,11 @@ def reminder():
     else:
         return ReminderController.save()
     
-# @app.route('/reminder/<id>', methods=['GET'])
-# def reminderDetail(id):
-#     return ReminderController.detail(id)
+@app.route('/reminder/<id>', methods=['GET', 'PUT', 'DELETE'])
+def reminderDetail(id):
+    if request.method == 'GET':
+        return ReminderController.detail(id)
+    elif request.method == 'PUT':
+        return ReminderController.ubah(id)
+    elif request.method == 'DELETE' :
+        return ReminderController.hapus(id)
