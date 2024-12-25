@@ -20,7 +20,7 @@ def logins():
 @app.route('/reminder', methods=['GET', 'POST'])
 def reminder(): 
     if request.method == 'GET':
-        return ReminderController.index()
+        return ReminderController.get_all_reminders()
     else:
         return ReminderController.save()
     
@@ -32,3 +32,4 @@ def reminderDetail(id):
         return ReminderController.ubah(id)
     elif request.method == 'DELETE' :
         return ReminderController.hapus(id)
+    
