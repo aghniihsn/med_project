@@ -1,5 +1,5 @@
 from app.model.user import User
-from flask_jwt_extended import jwt_required, verify_jwt_in_request, get_jwt_identity, create_access_token, create_refresh_token
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app import response, app, db
 from flask import request
@@ -16,19 +16,28 @@ def singleObject(data):
 
     return data
 
+from flask import request
+from flask_jwt_extended import create_access_token, create_refresh_token
+import datetime
+from app.model.user import User
+from app import response
+
 def login():
     try:
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
 
+        if not email or not password:
+            return response.BadRequest([], 'Email dan Password wajib diisi!')
+
         user = User.query.filter_by(email=email).first()
 
         if not user:
             return response.BadRequest([], 'Email Tidak Terdaftar')
         
-        if not user.checkPassword(password):
-            return response.BadRequest([], 'Kombinasi Password Salah')
+        if not user.checkPassword(password):  
+            return response.BadRequest([], 'Kombinasi Email dan Password Salah')
         
         data_user = {
             "id": user.id,
@@ -47,20 +56,29 @@ def login():
             "access_token": access_token,
             "refresh_token": refresh_token,
         }, "Success Login!")
+    
     except Exception as e:
-        print(e)
+        print(f"Error saat login: {e}")
         return response.error([], "Gagal Login")
     
-@jwt_required()  # Validasi token otomatis
-def get_user_by_token():
+def getUserbyToken():
     try:
-        current_user = get_jwt_identity()  # Ambil data user dari token
+        # Mendapatkan data user dari token JWT
+        current_user = get_jwt_identity()
+
         if not current_user:
-            return response.BadRequest([], "Token tidak valid atau user tidak ditemukan")
-        return response.success(current_user, "Token valid")
+            return response.error([], "Invalid Token", 401)
+
+        # Respon data user yang ada di token
+        user_data = {
+            "email": current_user['email'],  # Key ini harus sesuai dengan payload JWT
+            "id": current_user['id'],       # Data tambahan dari token
+            "full_name": current_user['full_name']  # Contoh field tambahan
+        }
+        return response.success(user_data, "User authenticated successfully")
     except Exception as e:
-        print(e)
-        return response.error([], "Gagal memvalidasi token")
+        print(f"Error: {e}")
+        return response.error([], "Something went wrong", 500)
 
 def registerUser():
     try:

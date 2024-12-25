@@ -10,61 +10,63 @@ import NoMatch from './NoMatch';
 import cookie from '../core/helpers/cookie';
 import useLocalData from '../core/hook/useLocalData';
 import CheckShedule from './CheckSchedule';
+import { AuthRoute } from '../components/AuthRoute';
 
-export default function App() {
-  const { dispatch } = useLocalData();
-  const navigate = useNavigate();
-  const location = useLocation();
+  let isRequestingAuth = false;
 
-//   async function checkingLoggedIn() {
-//     const token = localStorage.getItem('access_token');
-//     console.log("Access Token from LocalStorage:", token);
+  export default function App() {
+    const { dispatch } = useLocalData();
+    const navigate = useNavigate();
 
-//     try {
-//         if (token) {
-//           const response = await fetch('http://127.0.0.1:5000/user-by-token', {
-//             method: 'POST',
-//             headers: {
-//               'Content-Type': 'application/json',
-//               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-//             },
-//           });          
-
-//             console.log("Token Validation Response:", response);
-
-//             if (response.ok) {
-//                 const result = await response.json();
-//                 console.log("Token Validation Result:", result);
-//                 dispatch({
-//                     type: 'update',
-//                     value: result.data,
-//                     name: 'userData',
-//                 });
-//                 navigate(location.pathname || '/');
-//             } else {
-//                 throw new Error('Session expired or invalid token');
-//             }
-//         } else {
-//             console.log("No token found. Redirecting to login.");
-//             navigate('/login');
-//         }
-//     } catch (error) {
-//         console.error('Authentication error:', error);
-//         localStorage.removeItem('access_token');
-//         dispatch({
-//             type: 'update',
-//             value: null,
-//             name: 'userData',
-//         });
-//         navigate('/login');
-//     }
-// }
-
-// useEffect(() => {
-//     checkingLoggedIn();
-// }, []);
-
-
+    const location = useLocation();
+    
+    async function checkingLoggedIn() {
+      const userData = cookie.get('user');
+    
+      try {
+        if (userData && !isRequestingAuth) {
+          isRequestingAuth = true;
+    
+          const response = await fetch('/user-by-token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              token: JSON.parse(userData).access_token,
+            }),
+          });
+    
+          if (response.ok) {
+            const data = await response.json();
+            isRequestingAuth = false;
+              cookie.set("user", JSON.stringify(data));
+              dispatch({
+              type: 'update',
+              value: data,
+              name: 'userData',
+            });
+            navigate(location.pathname || "/");
+          } else {
+            cookie.del('user');
+            dispatch({
+              type: 'update',
+              value: null,
+              name: 'userData',
+            });
+            navigate("/login");
+            isRequestingAuth = false;
+          }
+        }
+      } catch (err) {
+        console.error("Error saat checkingLoggedIn:", err);
+        isRequestingAuth = false;
+      }
+    }
+    
+    useEffect(() => {
+      checkingLoggedIn();
+    }, []);
 
   return (
     <Routes>
@@ -89,25 +91,31 @@ export default function App() {
         <Route
           path="/dashboard"
           element={
+            <AuthRoute>
             <React.Suspense fallback={<Loading />}>
               <Dashboard />
             </React.Suspense>
+            </AuthRoute>
           }
         />
         <Route
           path="/add"
           element={
+            <AuthRoute>
             <React.Suspense fallback={<Loading />}>
               <AddReminder />
             </React.Suspense>
+            </AuthRoute>
           }
         />
         <Route
           path="/check-schedule"
           element={
+            <AuthRoute>
             <React.Suspense fallback={<Loading />}>
               <CheckShedule/>
             </React.Suspense>
+            </AuthRoute>
           }
         />
         <Route path="/*" element={<NoMatch />} />
