@@ -17,6 +17,10 @@ def register():
 def logins():
     return UserController.login()
 
+@app.route('/user-by-token', methods = ['POST'])
+def userByToken():
+    return UserController.getUserbyToken()
+
 @app.route('/reminder', methods=['GET', 'POST'])
 def reminder(): 
     if request.method == 'GET':
