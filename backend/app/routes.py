@@ -20,7 +20,7 @@ def logins():
 @app.route('/reminder', methods=['GET', 'POST'])
 def reminder(): 
     if request.method == 'GET':
-        return ReminderController.get_all_reminders()
+        return ReminderController.show()
     else:
         return ReminderController.save()
     
