@@ -16,53 +16,53 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  async function checkingLoggedIn() {
-    const token = localStorage.getItem('access_token');
-    console.log("Access Token from LocalStorage:", token);
+//   async function checkingLoggedIn() {
+//     const token = localStorage.getItem('access_token');
+//     console.log("Access Token from LocalStorage:", token);
 
-    try {
-        if (token) {
-          const response = await fetch('http://127.0.0.1:5000/user-by-token', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          });          
+//     try {
+//         if (token) {
+//           const response = await fetch('http://127.0.0.1:5000/user-by-token', {
+//             method: 'POST',
+//             headers: {
+//               'Content-Type': 'application/json',
+//               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+//             },
+//           });          
 
-            console.log("Token Validation Response:", response);
+//             console.log("Token Validation Response:", response);
 
-            if (response.ok) {
-                const result = await response.json();
-                console.log("Token Validation Result:", result);
-                dispatch({
-                    type: 'update',
-                    value: result.data,
-                    name: 'userData',
-                });
-                navigate(location.pathname || '/');
-            } else {
-                throw new Error('Session expired or invalid token');
-            }
-        } else {
-            console.log("No token found. Redirecting to login.");
-            navigate('/login');
-        }
-    } catch (error) {
-        console.error('Authentication error:', error);
-        localStorage.removeItem('access_token');
-        dispatch({
-            type: 'update',
-            value: null,
-            name: 'userData',
-        });
-        navigate('/login');
-    }
-}
+//             if (response.ok) {
+//                 const result = await response.json();
+//                 console.log("Token Validation Result:", result);
+//                 dispatch({
+//                     type: 'update',
+//                     value: result.data,
+//                     name: 'userData',
+//                 });
+//                 navigate(location.pathname || '/');
+//             } else {
+//                 throw new Error('Session expired or invalid token');
+//             }
+//         } else {
+//             console.log("No token found. Redirecting to login.");
+//             navigate('/login');
+//         }
+//     } catch (error) {
+//         console.error('Authentication error:', error);
+//         localStorage.removeItem('access_token');
+//         dispatch({
+//             type: 'update',
+//             value: null,
+//             name: 'userData',
+//         });
+//         navigate('/login');
+//     }
+// }
 
-useEffect(() => {
-    checkingLoggedIn();
-}, []);
+// useEffect(() => {
+//     checkingLoggedIn();
+// }, []);
 
 
 

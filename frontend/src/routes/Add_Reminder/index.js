@@ -1,10 +1,10 @@
 import React from "react";
-import { Form, Input, Button, DatePicker, TimePicker, Row, Col, Layout, Menu } from "antd";
+import { Form, Input, Button, DatePicker, TimePicker, Row, Col, Layout } from "antd";
 import { useNavigate } from 'react-router-dom';
 import "./style.css";
 
 const { TextArea } = Input;
-const { Header, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 
 function AddReminder(){
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ function AddReminder(){
                 </Form.Item>
                 <Form.Item
                   label="Description of Use"
-                  name="description"
+                  name="medicine_name"
                   rules={[{ required: true, message: "Please enter the description" }]}
                 >
                   <TextArea placeholder="Description of Use" rows={4} />
@@ -43,14 +43,14 @@ function AddReminder(){
               <Col span={12}>
                 <Form.Item
                   label="Time"
-                  name="time"
+                  name="reminder_time"
                   rules={[{ required: true, message: "Please select time" }]}
                 >
                   <TimePicker format={"HH:mm"} style={{ width: "100%" }} />
                 </Form.Item>
                 <Form.Item
                   label="Date Range"
-                  name="date_range"
+                  name="start_date"
                   rules={[{ required: true, message: "Please select date range" }]}
                 >
                   <DatePicker.RangePicker style={{ width: "100%" }} format={"DD/MM/YYYY"} />
