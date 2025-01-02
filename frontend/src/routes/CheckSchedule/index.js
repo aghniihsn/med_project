@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table } from "antd";
-import { EditOutlined,DeleteOutlined } from "@ant-design/icons";
-
+import { Button, Table, Modal } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 function CheckSchedule() {
   const [reminders, setReminders] = useState([]); // State to store fetched reminders
+  const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
+  const [recordToDelete, setRecordToDelete] = useState(null); // State to store record to delete
 
   // Fetch reminders on component mount
   useEffect(() => {
@@ -14,11 +15,11 @@ function CheckSchedule() {
         setReminders(
           data.map((item) => ({
             key: item.id_reminder, // Unique key for each row
+            medicine_name: item.medicine_name, // Assuming this field exists
             reminder_time: item.reminder_time,
-            status: item.status,
-            address: "Default Address", // Replace or fetch actual address if available
-            tags: ["active", "medicine"], // Replace or generate actual tags
-            name: `Medicine ${item.id_medicine}`, // Example name based on medicine ID
+            start_date: item.start_date, // Assuming this field exists
+            end_date: item.end_date, // Assuming this field exists
+            description: item.description, // Assuming this field exists
           }))
         );
       } catch (error) {
@@ -51,6 +52,41 @@ function CheckSchedule() {
     }
   }
 
+  // Function to show delete modal
+  const showDeleteModal = (record) => {
+    setRecordToDelete(record);
+    setIsModalVisible(true);
+  };
+
+  // Function to handle delete action
+  const handleDelete = async () => {
+    try {
+      await deleteReminder(recordToDelete.key); // Assuming key is the ID
+      setReminders(reminders.filter(item => item.key !== recordToDelete.key)); // Update state
+      setIsModalVisible(false); // Close modal
+    } catch (error) {
+      console.error("Failed to delete reminder:", error);
+    }
+  };
+
+  // Function to delete reminder from the server
+  async function deleteReminder(id) {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/reminder/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete reminder");
+      }
+    } catch (error) {
+      console.error("Error deleting reminder:", error);
+    }
+  }
+
   // Table columns
   const columns = [
     {
@@ -70,8 +106,8 @@ function CheckSchedule() {
     },
     {
       title: "End Date",
-      dataIndex: "start_date",
-      key: "start_date",
+      dataIndex: "end_date",
+      key: "end_date",
     },
     {
       title: "Description",
@@ -81,49 +117,41 @@ function CheckSchedule() {
     {
       title: "Action",
       key: "action",
-      render: (_,record) => (
+      render: (_, record) => (
         <div>
-        <Button
-        className="btn-sm btn-faint-primary"
-        type=""
-        // onClick={() => showModal("Delete", record)}
-        >
-        <DeleteOutlined />
-        </Button>
-        <Button
-        className="btn-sm btn-faint-primary ml-4"
-        type=""
-        // onClick={() => showModal("Update", record)}
-        >
-        <EditOutlined />
-        </Button>
+          <Button
+            className="btn-sm btn-faint-primary"
+            onClick={() => showDeleteModal(record)}
+          >
+            <DeleteOutlined />
+          </Button>
+          <Button
+            className="btn-sm btn-faint-primary ml-4"
+            // onClick={() => showModal("Update", record)}
+          >
+            <EditOutlined />
+          </Button>
         </div>
       ),
     },
   ];
-  
-  // const showModal = (type, record) => {
-  //   // let tempModalData = {
-  //   //   content: <NewEmployee afterSubmit={() => afterSubmitUser()} />,
-  //   //   title: "Karyawan",
-  //   //   visible: true,
-  //   //   onCancel: () => {
-  //   //     setModalData({ visible: false });
-  //   //   }
-  //   // };
-
-  //   if (type === "Delete") {
-  //     tempModalData.content = <ImportEmployee data={record} afterSubmit={() => afterSubmitUser()} />;
-  //     tempModalData.title = "Import Karyawan";
-  //   }
-  //   if (type === "Update") {
-  //     tempModalData.content = <ImportEmployee data={record} afterSubmit={() => afterSubmitUser()} />;
-  //     tempModalData.title = "Import Karyawan";
-  //   }
-  // }
 
   // Render the table
-  return <Table columns={columns} dataSource={reminders} />;
+  return (
+    <div>
+      <Table columns={columns} dataSource={reminders} />
+      <Modal
+        title="Ingatkan kembali"
+        visible={isModalVisible}
+        onOk={handleDelete}
+        onCancel={() => setIsModalVisible(false)}
+        okText="Ya"
+        cancelText="Batal"
+      >
+        <p>Anda akan diingatkan kembali besok, yakin untuk melanjutkan?</p>
+      </Modal>
+    </div>
+  );
 }
 
 export default CheckSchedule;
