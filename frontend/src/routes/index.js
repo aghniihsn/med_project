@@ -91,31 +91,31 @@ import { AuthRoute } from '../components/AuthRoute';
         <Route
           path="/dashboard"
           element={
-            <AuthRoute>
+            // <AuthRoute>
             <React.Suspense fallback={<Loading />}>
               <Dashboard />
             </React.Suspense>
-            </AuthRoute>
+            // </AuthRoute>
           }
         />
         <Route
           path="/add"
           element={
-            <AuthRoute>
+            // <AuthRoute>
             <React.Suspense fallback={<Loading />}>
               <AddReminder />
             </React.Suspense>
-            </AuthRoute>
+            // </AuthRoute>
           }
         />
         <Route
           path="/check-schedule"
           element={
-            <AuthRoute>
+            // <AuthRoute>
             <React.Suspense fallback={<Loading />}>
               <CheckShedule/>
             </React.Suspense>
-            </AuthRoute>
+            /* </AuthRoute> */
           }
         />
         <Route path="/*" element={<NoMatch />} />
