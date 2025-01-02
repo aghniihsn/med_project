@@ -53,17 +53,18 @@ def detail(id):
 
 def save():
     try:
-        # Ambil data dari request
-        reminder_time = request.form.get('reminder_time')  # Data untuk Reminder
-        status = request.form.get('status')               # Data untuk Reminder
-        description = request.form.get('description')     # Data untuk Reminder
-        sent_at = request.form.get('sent_at')             # Data untuk Reminder
+        # Ambil data dari request JSON
+        data = request.json
+        reminder_time = data.get('reminder_time') 
+        status = data.get('status')              
+        description = data.get('description')    
+        sent_at = data.get('sent_at')            
 
-        medicine_name = request.form.get('medicine_name')  # Data untuk Medicine
-        dosage = request.form.get('dosage')               # Data untuk Medicine
-        frequency = request.form.get('frequency')         # Data untuk Medicine
-        start_date = request.form.get('start_date')       # Data untuk Medicine
-        end_date = request.form.get('end_date')           # Data untuk Medicine
+        medicine_name = data.get('medicine_name')  
+        dosage = data.get('dosage')               
+        frequency = data.get('frequency')         
+        start_date = data.get('start_date')       
+        end_date = data.get('end_date')           
 
         # Simpan data ke tabel Medicine terlebih dahulu
         medicine = Medicine(

@@ -4,7 +4,7 @@ from app.model.medicine import Medicine
 
 class Reminder(db.Model):
     id_reminder = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
-    reminder_time = db.Column(db.DateTime, nullable=False)
+    reminder_time = db.Column(db.Time, nullable=False)
     status = db.Column(db.String(50), nullable=False)  
     description = db.Column(db.Text, nullable=True)
     sent_at = db.Column(db.DateTime, nullable=True)  

@@ -80,6 +80,26 @@ function Login() {
           Don’t have an account? <a href="/register">Sign up</a>
         </p>
       </div>
+
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '50px',
+          minWidth: '300px',
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <img
+            src="image/medicine.gif"
+            alt="reminder"
+            style={{ width: '100%', maxWidth: '400px' }}
+          />
+          <p>Set your Time to take your medication on Time!</p>
+        </div>
+      </div>
     </div>
   );
 }
