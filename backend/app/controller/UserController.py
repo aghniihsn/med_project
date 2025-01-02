@@ -1,11 +1,9 @@
-from app.model.user import User
-from flask_jwt_extended import jwt_required, get_jwt_identity
-
-from app import response, app, db
 from flask import request
+from app import response, app, db
 from flask_jwt_extended import *
-
-import datetime   
+from datetime import datetime, timedelta
+from app.model.user import User
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, decode_token
 
 def singleObject(data):
     data = {
@@ -15,12 +13,6 @@ def singleObject(data):
     }
 
     return data
-
-from flask import request
-from flask_jwt_extended import create_access_token, create_refresh_token
-import datetime
-from app.model.user import User
-from app import response
 
 def login():
     try:
@@ -45,8 +37,8 @@ def login():
             "email": user.email
         }
 
-        expires = datetime.timedelta(days=7)
-        refresh_expires = datetime.timedelta(days=7)
+        expires = timedelta(days=7)
+        refresh_expires = timedelta(days=7)
 
         access_token = create_access_token(identity=data_user, fresh=True, expires_delta=expires)
         refresh_token = create_refresh_token(identity=data_user, expires_delta=refresh_expires)
@@ -60,20 +52,24 @@ def login():
     except Exception as e:
         print(f"Error saat login: {e}")
         return response.error([], "Gagal Login")
-    
+
 def getUserbyToken():
     try:
-        # Mendapatkan data user dari token JWT
+        data = request.get_json()
+        token = data.get('token')
+
+        if not token:
+            return response.BadRequest([], 'Token is required')
+
         current_user = get_jwt_identity()
 
         if not current_user:
             return response.error([], "Invalid Token", 401)
 
-        # Respon data user yang ada di token
         user_data = {
-            "email": current_user['email'],  # Key ini harus sesuai dengan payload JWT
-            "id": current_user['id'],       # Data tambahan dari token
-            "full_name": current_user['full_name']  # Contoh field tambahan
+            "email": current_user['email'],
+            "id": current_user['id'],
+            "full_name": current_user['name']
         }
         return response.success(user_data, "User authenticated successfully")
     except Exception as e:
