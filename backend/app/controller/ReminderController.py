@@ -11,14 +11,14 @@ def show():
         for reminder, medicine in results:
             data.append({
                 'id_reminder': reminder.id_reminder,
-                'reminder_time': reminder.reminder_time,
+                'reminder_time': reminder.reminder_time.strftime('%H:%M:%S') if reminder.reminder_time else None,  # Konversi time ke string
                 'status': reminder.status,
-                'description' : reminder.description,
+                'description': reminder.description,
                 'medicine_name': medicine.medicine_name,
                 'dosage': medicine.dosage,
                 'frequency': medicine.frequency,
-                'start_date': medicine.start_date,
-                'end_date': medicine.end_date
+                'start_date': medicine.start_date.strftime('%Y-%m-%d') if medicine.start_date else None,  # Format tanggal
+                'end_date': medicine.end_date.strftime('%Y-%m-%d') if medicine.end_date else None,  # Format tanggal
             })
         return response.success(data, 'Sukses Mengambil Data')
     except Exception as e:
