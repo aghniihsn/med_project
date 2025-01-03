@@ -52,7 +52,7 @@ function Login() {
 
   return (
     <div style={{ display: "flex", flexWrap: "wrap", minHeight: "100vh" }}>
-      <div style={{ flex: 1, backgroundColor: "#FDF7F4", padding: "50px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minWidth: "300px" }}>
+      <div style={{ flex: 1, backgroundColor: "#F2F9FF", padding: "50px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minWidth: "300px" }}>
         <Title level={2}>Welcome back</Title>
         <p>Please enter your details</p>
 
@@ -70,7 +70,7 @@ function Login() {
           </div>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block style={{ marginBottom: "16px", backgroundColor: "#997C70" }}>
+            <Button type="primary" htmlType="submit" block style={{ marginBottom: "16px" }}>
               Sign in
             </Button>
           </Form.Item>

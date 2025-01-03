@@ -1,13 +1,19 @@
 import React from "react";
-import { Form, Input, Button, DatePicker, TimePicker, Row, Col, Layout } from "antd";
+import { Form, Input, Button, DatePicker, TimePicker, Row, Col, Layout, Menu } from "antd";
 import { useNavigate } from 'react-router-dom';
+import moment from "moment"
+
+import cookie from '../../core/helpers/cookie';
+import useLocalData from '../../core/hook/useLocalData';
 import "./style.css";
 
 const { TextArea } = Input;
-const { Content, Footer } = Layout;
+const { Header, Content, Footer } = Layout;
 
 function AddReminder(){
+  const { store, dispatch } = useLocalData();
   const navigate = useNavigate();
+  const [form] = Form.useForm()
 
   async function onFinish(values) {
     const payload = {
@@ -38,23 +44,61 @@ function AddReminder(){
       const data = await response.json();
       console.log("Response:", data);
       alert("Reminder berhasil disimpan!");
-      navigate('/check-schedule'); // Redirect ke dashboard
+      navigate('/check-schedule'); 
     } catch (error) {
       console.error("Error:", error);
       alert("Gagal menyimpan reminder.");
     }
   }
 
+  const disabledDate = (current, selectedDates) => {
+    if (!selectedDates || selectedDates.length === 0) {
+      return current && current < moment().startOf("day");
+    }
+  };
+
   function cancelBtn(){
     navigate('/dashboard')
   }
 
+  function handleHome(){
+    navigate('/dashboard')
+  }
+
+  function handleLogout() {
+    cookie.del('user');
+    dispatch({
+      type: 'update',
+      value: null,
+      name: 'userData',
+    });
+    navigate("/login");
+  }
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Content>
+      <Header
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          backgroundColor: "#fff",
+          borderBottom: "1px solid #f0f0f0",
+        }}
+      >
+        <div style={{ fontWeight: "bold", fontSize: "20px", color: "#333" }}>
+          ReminderApp
+        </div>
+        <Menu mode="horizontal" style={{ borderBottom: "none" }}>
+          <Menu.Item key="1" onClick={handleHome}>Home</Menu.Item>
+          <Menu.Item key="2">Profile</Menu.Item>
+          <Menu.Item key="3" onClick={handleLogout}>Logout</Menu.Item>
+        </Menu>
+      </Header>
+      <Content style={{backgroundColor:"#F2F9FF"}}>
         <div className="add-reminder-container">
           <h1 className="title">Atur Jadwal Minum Obat</h1>
-          <Form layout="vertical" onFinish={onFinish} className="form-container">
+          <Form layout="vertical" onFinish={onFinish} form={form} className="form-container">
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
@@ -101,25 +145,25 @@ function AddReminder(){
                 <Form.Item
                   label="Date Range"
                   name="start_date"
-                  rules={[{ required: true, message: "Please select date range" }]}
+                  rules={[{required: true, message: "Please select date range"}]}
                 >
-                  <DatePicker.RangePicker style={{ width: "100%" }} format={"DD/MM/YYYY"} />
+                  <DatePicker.RangePicker style={{ width: "100%" }} format={"DD/MM/YYYY"}   disabledDate={(current) => disabledDate(current, form.getFieldValue("start_date"))} />
                 </Form.Item>
               </Col>
             </Row>
 
             <Form.Item className="button-group">
-              <Button type="primary" htmlType="submit" className="save-button">
+              <Button type="primary" htmlType="submit">
                 Save
               </Button>
-              <Button htmlType="button" className="cancel-button" onClick={cancelBtn}>
+              <Button htmlType="button" color="primary" variant="outlined" onClick={cancelBtn}>
                 Cancel
               </Button>
             </Form.Item>
           </Form>
         </div>
       </Content>
-      <Footer style={{ textAlign: "center" }}>
+      <Footer style={{ textAlign: "center", backgroundColor:"#FFFFFF" }}>
         ©2024 ReminderApp - Keep Track of Your Medication
       </Footer>
     </Layout>

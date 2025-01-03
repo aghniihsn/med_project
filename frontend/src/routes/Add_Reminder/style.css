@@ -22,25 +22,3 @@
     justify-content: flex-start;
     gap: 10px;
   }
-  
-  .save-button {
-    background-color: #f85b5b;
-    border-color: #f85b5b;
-    margin-right: 5px;
-  }
-  
-  .save-button:hover {
-    background-color: #e44e4e;
-    border-color: #e44e4e;
-  }
-  
-  .cancel-button {
-    color: #f85b5b;
-    border-color: #f85b5b;
-  }
-  
-  .cancel-button:hover {
-    color: #e44e4e;
-    border-color: #e44e4e;
-  }
-  

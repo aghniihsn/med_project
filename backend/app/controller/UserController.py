@@ -3,7 +3,7 @@ from app import response, app, db
 from flask_jwt_extended import *
 from datetime import datetime, timedelta
 from app.model.user import User
-from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, decode_token
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity,jwt_required
 
 def singleObject(data):
     data = {
@@ -105,3 +105,35 @@ def registerUser():
     except Exception as e:
         print(e)
         return response.error([], "Gagal mendaftarkan user!")
+    
+# def getUser():
+    try:
+        # Dekorator untuk memastikan token diverifikasi
+        @jwt_required()
+        def inner():
+            # Mendapatkan data user dari token JWT
+            current_user = get_jwt_identity()
+
+            if not current_user:
+                return response.error([], "Token tidak valid atau sudah kedaluwarsa", 401)
+
+            # Query user berdasarkan ID dari token
+            user = User.query.filter_by(id=current_user['id']).first()
+
+            if not user:
+                return response.error([], "User tidak ditemukan", 404)
+
+            # Menyiapkan data user untuk response
+            user_data = {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email
+            }
+
+            return response.success(user_data, "Berhasil mendapatkan data user")
+
+        return inner()
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return response.error([], "Gagal mendapatkan data user", 500)

@@ -40,7 +40,7 @@ function Register() {
         console.error('Error:', error);
         message.error('Something went wrong!');
     }
-};
+  };
 
 
   const onFinishFailed = (errorInfo) => {
@@ -58,7 +58,7 @@ function Register() {
       <div
         style={{
           flex: 1,
-          backgroundColor: '#FDF7F4',
+          backgroundColor: '#F2F9FF',
           padding: '50px',
           display: 'flex',
           flexDirection: 'column',
@@ -123,7 +123,7 @@ function Register() {
               type="primary"
               htmlType="submit"
               block
-              style={{ marginBottom: '16px', backgroundColor: '#997C70' }}
+              style={{ marginBottom: '16px' }}
             >
               Sign Up
             </Button>
