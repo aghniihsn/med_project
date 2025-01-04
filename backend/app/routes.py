@@ -3,7 +3,7 @@ from app import app
 from app.controller import UserController
 from app.controller.UserController import registerUser
 from app.controller import ReminderController 
-
+from app.controller import NotifController
 
 @app.route('/')
 def index():
@@ -37,3 +37,6 @@ def reminderDetail(id):
     elif request.method == 'DELETE' :
         return ReminderController.hapus(id)
     
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    return NotifController.send_message()
