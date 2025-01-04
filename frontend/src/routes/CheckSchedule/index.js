@@ -161,7 +161,7 @@ function CheckSchedule() {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Header
+      {/* <Header
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -178,7 +178,7 @@ function CheckSchedule() {
           <Menu.Item key="2">Profile</Menu.Item>
           <Menu.Item key="3" onClick={handleLogout}>Logout</Menu.Item>
         </Menu>
-      </Header>
+      </Header> */}
 
       <Content style={{ padding: "50px", backgroundColor: "#F2F9FF" }}>
       <h1 className="title">Jadwal Minum Obat</h1>
@@ -198,9 +198,9 @@ function CheckSchedule() {
       </Modal>
       </Content>
 
-      <Footer style={{ textAlign: "center", backgroundColor:"#FFFFFF" }}>
+      {/* <Footer style={{ textAlign: "center", backgroundColor:"#FFFFFF" }}>
         ©2024 ReminderApp - Keep Track of Your Medication
-      </Footer>
+      </Footer> */}
     </Layout>
   );
 }

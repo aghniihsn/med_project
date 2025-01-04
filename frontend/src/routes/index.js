@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate} from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import Loading from '../components/Loading';
 import Login from './Login';
@@ -10,13 +10,20 @@ import CheckSchedule from './CheckSchedule'
 import NoMatch from './NoMatch';
 import AuthRoute from '../components/AuthRoute';
 import GuestRoute from '../components/GuestRoute';
+import LandingPage from './LandingPage'
 
-function App(){
+function App() {
 
     return (
         <Routes>
             <Route element={<Layout />}>
-                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/" element={
+                    <GuestRoute>
+                        <React.Suspense fallback={<Loading />}>
+                            <LandingPage />
+                        </React.Suspense>
+                    </GuestRoute>
+                } />
                 <Route
                     path="/login"
                     element={

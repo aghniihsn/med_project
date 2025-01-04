@@ -1,44 +1,49 @@
-// import React from "react";
-// import { Outlet } from "react-router-dom";
-
-// function Layout() {
-
-//     return (
-//       <Outlet />
-//     )
-// }
-
-// export default Layout;
-
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import { Layout as BaseLayout } from "antd";
-
-
-import useLocalData from "../../core/hook/useLocalData";
 import Header from "../Header";
-// import Sidebar from '../Sidebar';
-
-// import './style.css';
+import Footer from "../Footer";
+import useLocalData from "../../core/hook/useLocalData";
+import cookie from "../../core/helpers/cookie";
 
 function Layout() {
+  const { store, dispatch } = useLocalData();
+  const userData = store.userData;
+  const location = useLocation()
+  
+  // Pastikan data user diambil dan di-set dengan dispatch
+  const cookieUser = cookie.get("user");
+  useEffect(() => {
+    if (cookieUser && !userData) {
+      dispatch({
+        type: "update",
+        name: "userData",
+        value: JSON.parse(cookieUser),
+      });
+    }
+  }, [cookieUser]);
 
-  const { store } = useLocalData();
-
-  if (!store?.userData) {
+  // Jika userData tidak ada, hanya render Outlet
+  if (!userData) {
     return (
-      <Outlet />
+      <>
+      {
+        !["/login", "/register"].includes(location.pathname) &&  <Header />
+      }
+        <Outlet />
+      </>
+
     )
   }
 
   return (
-    <BaseLayout style={{ minHeight: '100vh' }}>
-      {/* <Sidebar /> */}
+    <BaseLayout style={{ minHeight: "100vh" }}>
       <BaseLayout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0 }} />
+        <Header />
         <BaseLayout.Content className="site-content-layout">
           <Outlet />
         </BaseLayout.Content>
+        <Footer />
       </BaseLayout>
     </BaseLayout>
   );

@@ -2,11 +2,14 @@ import React from 'react';
 import { Form, Input, Button, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import cookie from '../../core/helpers/cookie';
+import useLocalData from "../../core/hook/useLocalData";
 
 const { Title, Link } = Typography;
 
 function Login() {
   const navigate = useNavigate();
+  const { store, dispatch } = useLocalData();
+  const cookieUser = cookie.get("user");
 
   const onFinish = async (values) => {
     const payload = {
@@ -34,7 +37,11 @@ function Login() {
                 user: result.data.data
             };
             cookie.set("user", JSON.stringify(userData), 7, '/');
-            // setTimeout(navigate("/dashboard"))
+            dispatch({
+              type: "update",
+              name: "userData",
+              value: JSON.parse(cookieUser),
+            });
             navigate("/dashboard")
         } else {
             console.error("Login failed:", result);

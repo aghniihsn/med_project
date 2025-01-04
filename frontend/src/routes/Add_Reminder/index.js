@@ -77,7 +77,7 @@ function AddReminder(){
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Header
+      {/* <Header
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -94,7 +94,7 @@ function AddReminder(){
           <Menu.Item key="2">Profile</Menu.Item>
           <Menu.Item key="3" onClick={handleLogout}>Logout</Menu.Item>
         </Menu>
-      </Header>
+      </Header> */}
       <Content style={{backgroundColor:"#F2F9FF"}}>
         <div className="add-reminder-container">
           <h1 className="title">Atur Jadwal Minum Obat</h1>
@@ -163,9 +163,9 @@ function AddReminder(){
           </Form>
         </div>
       </Content>
-      <Footer style={{ textAlign: "center", backgroundColor:"#FFFFFF" }}>
+      {/* <Footer style={{ textAlign: "center", backgroundColor:"#FFFFFF" }}>
         ©2024 ReminderApp - Keep Track of Your Medication
-      </Footer>
+      </Footer> */}
     </Layout>
   );
 }

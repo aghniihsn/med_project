@@ -6,7 +6,7 @@ import { PlusCircleOutlined, ScheduleOutlined, FileTextOutlined } from "@ant-des
 import cookie from '../../core/helpers/cookie';
 import useLocalData from '../../core/hook/useLocalData';
 
-const { Header, Content, Footer } = Layout;
+const { Content} = Layout;
 
 function Dashboard() {
   const { store, dispatch } = useLocalData();
@@ -17,22 +17,8 @@ function Dashboard() {
     navigate('/add')
   }
 
-  function handleLogout() {
-    cookie.del('user');
-    dispatch({
-      type: 'update',
-      value: null,
-      name: 'userData',
-    });
-    navigate("/login");
-  }
-
   function handleClickCheck(){
     navigate('/check-schedule')
-  }
-
-  function handleHome(){
-    navigate('/dashboard')
   }
 
   // useEffect(() => {
@@ -64,7 +50,7 @@ function Dashboard() {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Header
+      {/* <Header
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -81,7 +67,7 @@ function Dashboard() {
           <Menu.Item key="2">Profile</Menu.Item>
           <Menu.Item key="3" onClick={handleLogout}>Logout</Menu.Item>
         </Menu>
-      </Header>
+      </Header> */}
 
       <Content style={{ padding: "50px", backgroundColor: "#F2F9FF" }}>
         <div style={{ textAlign: "center", marginBottom: "50px" }}>
@@ -143,9 +129,9 @@ function Dashboard() {
         </Row>
       </Content>
 
-      <Footer style={{ textAlign: "center", backgroundColor:"#FFFFFF" }}>
+      {/* <Footer style={{ textAlign: "center", backgroundColor:"#FFFFFF" }}>
         ©2024 ReminderApp - Keep Track of Your Medication
-      </Footer>
+      </Footer> */}
     </Layout>
   );
 }
