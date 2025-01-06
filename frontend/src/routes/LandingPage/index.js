@@ -1,14 +1,19 @@
 import React from "react";
 import { Layout, Button } from 'antd';
-
+import { useNavigate } from 'react-router-dom';
 // import "./style.css";
 
 function LandingPage() {
     const { Footer } = Layout;
+    const navigate = useNavigate();
+    
+    function handleRegister(){
+        navigate('/register')
+    }
 
     return (
         <>
-        <div className="landing" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '90vh', backgroundColor:'f9f9f9'}}>
+        <div className="landing" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '90vh', backgroundColor:'#F2F9FF'}}>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                 {/* <h4 style={{ color: '#6c63ff' }}>Let's Begin</h4> */}
                 <h1 style={{ fontSize: '2.5em', fontWeight: 'bold' }}>Remind Your <span style={{ color: '#6c63ff' }}>Medication Needs</span> For You</h1>
@@ -16,7 +21,7 @@ function LandingPage() {
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam dignissim, sem non convallis molestie.
                 </p>
                 <div style={{ marginTop: '20px' }}>
-                    <Button type="primary" style={{ marginRight: '10px' }}>Register</Button>
+                    <Button type="primary" style={{ marginRight: '10px' }} onClick={handleRegister}>Register</Button>
                     {/* <Button type="default" icon={<i className="fas fa-play-circle"></i>}>Play Video</Button> */}
                 </div>
             </div>
