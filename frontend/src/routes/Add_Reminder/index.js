@@ -3,15 +3,12 @@ import { Form, Input, Button, DatePicker, TimePicker, Row, Col, Layout, Menu } f
 import { useNavigate } from 'react-router-dom';
 import moment from "moment"
 
-import cookie from '../../core/helpers/cookie';
-import useLocalData from '../../core/hook/useLocalData';
 import "./style.css";
 
 const { TextArea } = Input;
-const { Header, Content, Footer } = Layout;
+const {Content} = Layout;
 
 function AddReminder(){
-  const { store, dispatch } = useLocalData();
   const navigate = useNavigate();
   const [form] = Form.useForm()
 
@@ -20,7 +17,7 @@ function AddReminder(){
       medicine_name: values.medicine_name,
       dosage: values.dosage,
       frequency: values.frequency,
-      start_date: values.start_date[0].format("YYYY-MM-DD"), // Format sesuai backend
+      start_date: values.start_date[0].format("YYYY-MM-DD"),
       end_date: values.start_date[1].format("YYYY-MM-DD"),
       reminder_time: values.reminder_time.format("HH:mm"),
       description: values.description,
@@ -61,40 +58,8 @@ function AddReminder(){
     navigate('/dashboard')
   }
 
-  function handleHome(){
-    navigate('/dashboard')
-  }
-
-  function handleLogout() {
-    cookie.del('user');
-    dispatch({
-      type: 'update',
-      value: null,
-      name: 'userData',
-    });
-    navigate("/login");
-  }
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      {/* <Header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: "#fff",
-          borderBottom: "1px solid #f0f0f0",
-        }}
-      >
-        <div style={{ fontWeight: "bold", fontSize: "20px", color: "#333" }}>
-          ReminderApp
-        </div>
-        <Menu mode="horizontal" style={{ borderBottom: "none" }}>
-          <Menu.Item key="1" onClick={handleHome}>Home</Menu.Item>
-          <Menu.Item key="2">Profile</Menu.Item>
-          <Menu.Item key="3" onClick={handleLogout}>Logout</Menu.Item>
-        </Menu>
-      </Header> */}
       <Content style={{backgroundColor:"#F2F9FF"}}>
         <div className="add-reminder-container">
           <h1 className="title">Atur Jadwal Minum Obat</h1>
@@ -163,9 +128,6 @@ function AddReminder(){
           </Form>
         </div>
       </Content>
-      {/* <Footer style={{ textAlign: "center", backgroundColor:"#FFFFFF" }}>
-        ©2024 ReminderApp - Keep Track of Your Medication
-      </Footer> */}
     </Layout>
   );
 }

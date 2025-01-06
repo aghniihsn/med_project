@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from 'react-router-dom';
-import { Layout, Menu, Row, Col } from "antd";
+import { Layout, Row, Col } from "antd";
 import { PlusCircleOutlined, ScheduleOutlined, FileTextOutlined } from "@ant-design/icons";
-
-import cookie from '../../core/helpers/cookie';
-import useLocalData from '../../core/hook/useLocalData';
 
 const { Content} = Layout;
 
 function Dashboard() {
-  const { store, dispatch } = useLocalData();
-  const [userName, setUserName] = useState("");
   const navigate = useNavigate();
 
   function handleClickAdd(){
@@ -21,54 +16,8 @@ function Dashboard() {
     navigate('/check-schedule')
   }
 
-  // useEffect(() => {
-  //   async function fetchUser() {
-  //     const token = JSON.parse(localStorage.getItem('user')).access_token;
-
-  //     try {
-  //       const response = await fetch('/user', {
-  //         method: 'GET',
-  //         headers: {
-  //           'Authorization': `Bearer ${token}`, // Kirim token JWT di header
-  //           'Content-Type': 'application/json',
-  //         },
-  //       });
-
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //           setUserName(data.data.name); // Ambil nama user dari response
-  //         } else {
-  //           console.error("Gagal mendapatkan data user:", response.statusText);
-  //         }
-  //       } catch (err) {
-  //         console.error("Error:", err);
-  //       }
-  //     }
-
-  //     fetchUser();
-  //   }, []);
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      {/* <Header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: "#fff",
-          borderBottom: "1px solid #f0f0f0",
-        }}
-      >
-        <div style={{ fontWeight: "bold", fontSize: "20px", color: "#333" }}>
-          ReminderApp
-        </div>
-        <Menu mode="horizontal" style={{ borderBottom: "none" }}>
-          <Menu.Item key="1" onClick={handleHome}>Home</Menu.Item>
-          <Menu.Item key="2">Profile</Menu.Item>
-          <Menu.Item key="3" onClick={handleLogout}>Logout</Menu.Item>
-        </Menu>
-      </Header> */}
-
       <Content style={{ padding: "50px", backgroundColor: "#F2F9FF" }}>
         <div style={{ textAlign: "center", marginBottom: "50px" }}>
           <h1 level={2}>Hello, Name</h1>
@@ -128,10 +77,6 @@ function Dashboard() {
           </Col>
         </Row>
       </Content>
-
-      {/* <Footer style={{ textAlign: "center", backgroundColor:"#FFFFFF" }}>
-        ©2024 ReminderApp - Keep Track of Your Medication
-      </Footer> */}
     </Layout>
   );
 }

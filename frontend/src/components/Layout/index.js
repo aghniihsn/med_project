@@ -11,7 +11,6 @@ function Layout() {
   const userData = store.userData;
   const location = useLocation()
   
-  // Pastikan data user diambil dan di-set dengan dispatch
   const cookieUser = cookie.get("user");
   useEffect(() => {
     if (cookieUser && !userData) {
@@ -23,7 +22,6 @@ function Layout() {
     }
   }, [cookieUser]);
 
-  // Jika userData tidak ada, hanya render Outlet
   if (!userData) {
     return (
       <>

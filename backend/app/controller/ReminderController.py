@@ -1,9 +1,19 @@
 from app.model.reminder import Reminder
 from app.model.medicine import Medicine
+from app.controller.NotifController import send_message
+from datetime import datetime, timedelta
+from threading import Thread
+import schedule
+import time
 
 from app import response, app, db
-from flask import request
+from flask import request, jsonify
  
+def run_schedule():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
 def show():
     try:
         results = db.session.query(Reminder, Medicine).join(Medicine, Reminder.id_medicine == Medicine.id_medicine).all()
@@ -51,49 +61,57 @@ def detail(id):
         print(e)
         return response.error('', 'Gagal Mengambil Detail Data')
 
+def schedule_reminders(start_date, reminder_time, frequency, token, target, message):
+    interval = 24 * 60 // frequency  # Total menit dalam sehari dibagi frekuensi
+    for i in range(frequency):
+        reminder_datetime = datetime.combine(start_date, reminder_time) + timedelta(days=i)
+        schedule_time = reminder_datetime.strftime('%H:%M')
+        print(f"Scheduling message for {schedule_time}")  # Debugging
+        schedule.every().day.at(schedule_time).do(lambda t=token, tg=target, msg=message: send_message(t, tg, msg))
+        
 def save():
     try:
-        # Ambil data dari request JSON
         data = request.json
-        reminder_time = data.get('reminder_time') 
+        reminder_time_str = data.get('reminder_time')
         status = data.get('status')              
         description = data.get('description')    
-        sent_at = data.get('sent_at')            
+        token = data.get('token') 
+        target = data.get('target') 
+        message = data.get('message') 
+        frequency = data.get('frequency')  
+        start_date_str = data.get('start_date')  
 
-        medicine_name = data.get('medicine_name')  
-        dosage = data.get('dosage')               
-        frequency = data.get('frequency')         
-        start_date = data.get('start_date')       
-        end_date = data.get('end_date')           
+        reminder_time = datetime.strptime(reminder_time_str, '%H:%M:%S').time()  
+        start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()  
 
-        # Simpan data ke tabel Medicine terlebih dahulu
         medicine = Medicine(
-            medicine_name=medicine_name,
-            dosage=dosage,
+            medicine_name=data.get('medicine_name'),
+            dosage=data.get('dosage'),
             frequency=frequency,
             start_date=start_date,
-            end_date=end_date
+            end_date=data.get('end_date')
         )
         db.session.add(medicine)
-        db.session.commit()  # Commit untuk mendapatkan ID Medicine
+        db.session.commit() 
 
-        # Simpan data ke tabel Reminder dengan ID Medicine sebagai foreign key
         reminder = Reminder(
             reminder_time=reminder_time,
             status=status,
             description=description,
-            sent_at=sent_at,
-            id_medicine=medicine.id_medicine  # Hubungkan dengan tabel Medicine
+            id_medicine=medicine.id_medicine  
         )
         db.session.add(reminder)
         db.session.commit()
 
-        return response.success('', 'Sukses Menambahkan Data Reminder dan Medicine')
+        #set jadwal kirim pesan
+        schedule_reminders(start_date, reminder_time, frequency, token, target, message)
+
+        return jsonify({"status": "success", "message": "Sukses Menambahkan Data Reminder dan Medicine"})
     except Exception as e:
         print(e)
-        db.session.rollback()  # Rollback jika ada error
-        return response.error('', 'Gagal Menambahkan Data Reminder dan Medicine')
-
+        db.session.rollback()
+        return jsonify({"status": "error", "message": "Gagal Menambahkan Data Reminder dan Medicine"})
+              
 def ubah(id_reminder):
     try:
         # Ambil data Reminder berdasarkan ID
@@ -163,3 +181,6 @@ def hapus(id_reminder):
         print(e)
         db.session.rollback()
         return response.error('', 'Gagal Menghapus Data Reminder dan Medicine')
+    
+# thread = Thread(target=run_schedule)
+# thread.start()

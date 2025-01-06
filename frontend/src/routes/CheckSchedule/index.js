@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
-import { Button, Table, Modal, Layout, Menu } from "antd";
+import { Button, Table, Modal, Layout } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 
-import cookie from '../../core/helpers/cookie';
-import useLocalData from '../../core/hook/useLocalData';
-
-const { Header, Content, Footer } = Layout;
+const { Content } = Layout;
 
 function CheckSchedule() {
   const [reminders, setReminders] = useState([]); 
   const [isModalVisible, setIsModalVisible] = useState(false); 
   const [recordToDelete, setRecordToDelete] = useState(null); 
-  const { store, dispatch } = useLocalData();
-  const navigate = useNavigate();
-
 
   async function fetchReminders() {
     try {
@@ -92,20 +85,6 @@ function CheckSchedule() {
     }
   }
 
-  function handleLogout() {
-    cookie.del('user');
-    dispatch({
-      type: 'update',
-      value: null,
-      name: 'userData',
-    });
-    navigate("/login");
-  }
-
-  function handleHome(){
-    navigate('/dashboard')
-  }
-
   const columns = [
     {
       title: "Drug Name",
@@ -141,7 +120,6 @@ function CheckSchedule() {
           color="danger"
           variant="dashed"
           className="mr-4"
-            // className="btn-sm btn-faint-primary"
             onClick={() => showDeleteModal(record)}
           >
             <DeleteOutlined />
@@ -161,31 +139,9 @@ function CheckSchedule() {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      {/* <Header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: "#fff",
-          borderBottom: "1px solid #f0f0f0",
-        }}
-      >
-        <div style={{ fontWeight: "bold", fontSize: "20px", color: "#333" }}>
-          ReminderApp
-        </div>
-        <Menu mode="horizontal" style={{ borderBottom: "none" }}>
-          <Menu.Item key="1" onClick={handleHome}>Home</Menu.Item>
-          <Menu.Item key="2">Profile</Menu.Item>
-          <Menu.Item key="3" onClick={handleLogout}>Logout</Menu.Item>
-        </Menu>
-      </Header> */}
-
       <Content style={{ padding: "50px", backgroundColor: "#F2F9FF" }}>
       <h1 className="title">Jadwal Minum Obat</h1>
       <Table columns={columns} dataSource={reminders} />
-      {/* <Button htmlType="button" className="justify-align-end" onClick={handleHome}>
-        Back
-      </Button> */}
       <Modal
         title="Ingatkan kembali"
         visible={isModalVisible}
@@ -197,10 +153,6 @@ function CheckSchedule() {
         <p>Anda akan diingatkan kembali besok, yakin untuk melanjutkan?</p>
       </Modal>
       </Content>
-
-      {/* <Footer style={{ textAlign: "center", backgroundColor:"#FFFFFF" }}>
-        ©2024 ReminderApp - Keep Track of Your Medication
-      </Footer> */}
     </Layout>
   );
 }

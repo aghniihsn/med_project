@@ -12,7 +12,7 @@ function Register() {
     const payload = {
         name: values.name,
         email: values.email,
-        phone_number: values.no_telp, // Pastikan key cocok dengan backend
+        phone_number: values.no_telp, 
         password: values.password,
     };
 

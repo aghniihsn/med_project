@@ -1,7 +1,9 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import useLocalData from "../../core/hook/useLocalData";
 import cookie from "../../core/helpers/cookie";
+import "./style.css";
 
 function Header() {
   const { store, dispatch } = useLocalData();
@@ -18,18 +20,24 @@ function Header() {
     navigate("/login");
   }
 
+  function handleLogin(){
+    navigate("/login")
+  }
+
   return (
     <header>
       <nav className="navbar">
         {userData ? (
           <>
-            <Link to="/home">Home</Link>
+            {/* <h1>ReminderApp</h1> */}
+            <Link to="/dashboard">Home</Link>
             <Link to="/profile">Profile</Link>
             <button onClick={handleLogout}>Logout</button>
           </>
         ) : (
           <>
-            <Link to="/login">Login</Link>
+            {/* <h2>ReminderApp</h2> */}
+            <button onClick={handleLogin}>Login</button>
           </>
         )}
       </nav>
