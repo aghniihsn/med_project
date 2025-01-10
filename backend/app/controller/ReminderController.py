@@ -1,5 +1,6 @@
 from app.model.reminder import Reminder
 from app.model.medicine import Medicine
+from app.model.user import User
 from app.controller.NotifController import send_message
 from datetime import datetime, timedelta
 from threading import Thread
@@ -76,12 +77,21 @@ def save():
         status = data.get('status')              
         description = data.get('description')    
         sent_at = data.get('sent_at')            
-        token = data.get('token')  
-        target = data.get('target')  
-        message = data.get('message')  
-        frequency = data.get('frequency')  
+        frequency = int(data.get('frequency'))  
 
         reminder_time = datetime.strptime(reminder_time_str, '%Y-%m-%d %H:%M:%S')
+
+        user_id = data.get('user_id')
+        if user_id is None:
+            return jsonify({"stauts": "error", "message": "User Id is missing "}), 404
+
+        user = User.query.get(user_id)
+        if user is None:
+            return jsonify({"stauts": "error", "message": "User not found"}), 404
+
+        message = "waktunya minum obat"  
+        token =   "YGgTRnVANIrkxEc3lOCqjLUyMuSHhwdK84bD09po"
+        target = user.no_telp  
 
         medicine = Medicine(
             medicine_name=data.get('medicine_name'),

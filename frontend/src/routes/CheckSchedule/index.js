@@ -130,7 +130,7 @@ function CheckSchedule() {
           color="primary"
           variant="dashed"
             className="btn-sm btn-faint-primary ml-4"
-            onClick={(navigate('/update'))}
+            // onClick={(navigate('/update'))}
           >
             <EditOutlined />
           </Button>
