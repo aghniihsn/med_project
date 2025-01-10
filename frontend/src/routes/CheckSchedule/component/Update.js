@@ -2,13 +2,13 @@ import React from "react";
 import { Form, Input, Button, DatePicker, TimePicker, Row, Col, Layout } from "antd";  
 import { useNavigate } from 'react-router-dom';  
 import moment from "moment";  
-import cookie from '../../core/helpers/cookie';  
+import cookie from '../../../core/helpers/cookie';  
 import "./style.css";  
   
 const { TextArea } = Input;  
 const { Content } = Layout;  
   
-function AddReminder() {  
+function Update() {  
     const navigate = useNavigate();  
     const [form] = Form.useForm();  
   
@@ -16,7 +16,7 @@ function AddReminder() {
         console.log(values);    
           
         const userCookie = cookie.get('user');   
-        console.log("User Cookie:", userCookie); // Debugging  
+        console.log("User Cookie:", userCookie); 
   
         if (!userCookie) {    
             alert("User not found. Please log in again.");    
@@ -32,9 +32,9 @@ function AddReminder() {
             return;  
         }  
   
-        console.log("Parsed User:", user); // Debugging  
-        const userId = user.user.id; // Access the id property correctly  
-        console.log("User ID:", userId); // Debugging  
+        console.log("Parsed User:", user); 
+        const userId = user.user.id;  
+        console.log("User ID:", userId); 
   
         const payload = {    
             medicine_name: values.medicine_name,    
@@ -155,4 +155,4 @@ function AddReminder() {
     );  
 }  
   
-export default AddReminder;  
+export default Update;  

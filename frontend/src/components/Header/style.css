@@ -1,9 +1,15 @@
 .navbar {
     display: flex; 
-    justify-content:end; 
+    justify-content:space-between; 
     align-items: center; 
     padding: 16px 32px; 
     background-color: #ffff; 
+}
+
+.nav-links {  
+    display: flex;
+    margin-left: auto; 
+    align-items: center;
 }
 
 .navbar a {
@@ -32,3 +38,8 @@
     background-color: #007bff; 
     color: white; 
 }
+    
+.logo {  
+    height: 40px;  
+    margin-right: 20px;
+}  

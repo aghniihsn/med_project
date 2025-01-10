@@ -11,6 +11,7 @@ import NoMatch from './NoMatch';
 import AuthRoute from '../components/AuthRoute';
 import GuestRoute from '../components/GuestRoute';
 import LandingPage from './LandingPage'
+import Update from './CheckSchedule/component/Update';
 
 function App() {
 
@@ -70,6 +71,16 @@ function App() {
                         <AuthRoute>
                             <React.Suspense fallback={<Loading />}>
                                 <CheckSchedule />
+                            </React.Suspense>
+                        </AuthRoute>
+                    }
+                />
+                <Route
+                    path="/update"
+                    element={
+                        <AuthRoute>
+                            <React.Suspense fallback={<Loading />}>
+                                <Update />
                             </React.Suspense>
                         </AuthRoute>
                     }

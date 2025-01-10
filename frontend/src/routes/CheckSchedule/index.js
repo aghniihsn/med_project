@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Button, Table, Modal, Layout } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 
 const { Content } = Layout;
 
 function CheckSchedule() {
+  const navigate = useNavigate()
   const [reminders, setReminders] = useState([]); 
   const [isModalVisible, setIsModalVisible] = useState(false); 
   const [recordToDelete, setRecordToDelete] = useState(null); 
@@ -127,8 +129,8 @@ function CheckSchedule() {
           <Button
           color="primary"
           variant="dashed"
-            // className="btn-sm btn-faint-primary ml-4"
-            // onClick={() => showModal("Update", record)}
+            className="btn-sm btn-faint-primary ml-4"
+            onClick={(navigate('/update'))}
           >
             <EditOutlined />
           </Button>

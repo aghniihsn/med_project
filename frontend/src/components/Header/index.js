@@ -27,9 +27,11 @@ function Header() {
   return (
     <header>
       <nav className="navbar">
+      <img src="image/logoapp.jpg" alt="Logo" className="logo" />
+      <p>Health Mate</p>
+      <div className="nav-links">
         {userData ? (
           <>
-            {/* <h1>ReminderApp</h1> */}
             <Link to="/dashboard">Home</Link>
             <Link to="/profile">Profile</Link>
             <button onClick={handleLogout}>Logout</button>
@@ -40,6 +42,7 @@ function Header() {
             <button onClick={handleLogin}>Login</button>
           </>
         )}
+        </div>
       </nav>
     </header>
   );
