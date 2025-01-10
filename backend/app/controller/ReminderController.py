@@ -60,51 +60,50 @@ def detail(id):
     except Exception as e:
         print(e)
         return response.error('', 'Gagal Mengambil Detail Data')
-
-def schedule_reminders(start_date, reminder_time, frequency, token, target, message):
-    interval = 24 * 60 // frequency  # Total menit dalam sehari dibagi frekuensi
-    for i in range(frequency):
-        reminder_datetime = datetime.combine(start_date, reminder_time) + timedelta(days=i)
-        schedule_time = reminder_datetime.strftime('%H:%M')
-        print(f"Scheduling message for {schedule_time}")  # Debugging
-        schedule.every().day.at(schedule_time).do(lambda t=token, tg=target, msg=message: send_message(t, tg, msg))
         
+def schedule_reminders(reminder_time, frequency, token, target, message):
+    interval = 24 * 60 // frequency
+    for i in range(frequency):
+        reminder_datetime = reminder_time + timedelta(minutes=i * interval)
+        schedule_time = reminder_datetime.strftime('%H:%M')
+        print(f"Scheduling message for {schedule_time}")
+        schedule.every().day.at(schedule_time).do(lambda t=token, tg=target, msg=message: send_message(t, tg, msg))
+
 def save():
     try:
         data = request.json
         reminder_time_str = data.get('reminder_time')
         status = data.get('status')              
         description = data.get('description')    
-        token = data.get('token') 
-        target = data.get('target') 
-        message = data.get('message') 
+        sent_at = data.get('sent_at')            
+        token = data.get('token')  
+        target = data.get('target')  
+        message = data.get('message')  
         frequency = data.get('frequency')  
-        start_date_str = data.get('start_date')  
 
-        reminder_time = datetime.strptime(reminder_time_str, '%H:%M:%S').time()  
-        start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()  
+        reminder_time = datetime.strptime(reminder_time_str, '%Y-%m-%d %H:%M:%S')
 
         medicine = Medicine(
             medicine_name=data.get('medicine_name'),
             dosage=data.get('dosage'),
             frequency=frequency,
-            start_date=start_date,
+            start_date=data.get('start_date'),
             end_date=data.get('end_date')
         )
         db.session.add(medicine)
-        db.session.commit() 
+        db.session.commit()  
 
         reminder = Reminder(
             reminder_time=reminder_time,
             status=status,
             description=description,
+            sent_at=sent_at,
             id_medicine=medicine.id_medicine  
         )
         db.session.add(reminder)
         db.session.commit()
 
-        #set jadwal kirim pesan
-        schedule_reminders(start_date, reminder_time, frequency, token, target, message)
+        schedule_reminders(reminder_time, frequency, token, target, message)
 
         return jsonify({"status": "success", "message": "Sukses Menambahkan Data Reminder dan Medicine"})
     except Exception as e:
