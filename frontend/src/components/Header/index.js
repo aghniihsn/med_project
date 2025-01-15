@@ -1,4 +1,5 @@
 import React from "react";
+import { Button, notification } from 'antd';
 import { Link, useNavigate } from "react-router-dom";
 
 import useLocalData from "../../core/hook/useLocalData";
@@ -23,7 +24,14 @@ function Header() {
   function handleLogin(){
     navigate("/login")
   }
-
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (type) => {
+    api[type]({
+      message: 'Notification Title',
+      description:
+        'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+    });
+  };
   return (
     <header>
       <nav className="navbar">
@@ -34,11 +42,12 @@ function Header() {
           <>
             <Link to="/dashboard">Home</Link>
             <Link to="/profile">Profile</Link>
+            {contextHolder}
+            <Button onClick={() => openNotificationWithIcon('success')}>Success</Button>
             <button onClick={handleLogout}>Logout</button>
           </>
         ) : (
           <>
-            {/* <h2>ReminderApp</h2> */}
             <button onClick={handleLogin}>Login</button>
           </>
         )}
