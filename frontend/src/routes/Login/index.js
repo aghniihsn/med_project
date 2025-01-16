@@ -13,11 +13,11 @@ function Login() {
 
   const onFinish = async (values) => {
     const payload = {
-      email: values.email,
-      password: values.password,
-    };  
+        email: values.email,
+        password: values.password,
+    };
     try {
-        console.log("Sending data:", values);
+        console.log("Sending data:", payload);
         const response = await fetch("http://localhost:5000/login", {
             method: "POST",
             headers: {
@@ -31,18 +31,17 @@ function Login() {
 
         if (response.ok) {
             console.log("Login successful:", result);
-            const userData = {
-                access_token: result.data.access_token,
-                refresh_token: result.data.refresh_token,
-                user: result.data.data
-            };
-            cookie.set("user", JSON.stringify(userData), 7, '/');
-            dispatch({
-              type: "update",
-              name: "userData",
-              value: JSON.parse(cookieUser),
-            });
-            navigate("/dashboard")
+            const userData = result.data.data; // Ambil data user
+            cookie.set("user", JSON.stringify(userData), { path: "/", expires: 7 });
+
+            if (cookieUser) {
+                dispatch({
+                    type: "update",
+                    name: "userData",
+                    value: JSON.parse(cookieUser),
+                });
+            }
+            navigate("/dashboard");
         } else {
             console.error("Login failed:", result);
             alert(result.message || "Login failed!");
@@ -51,7 +50,7 @@ function Login() {
         console.error("Error:", error);
         alert("Something went wrong. Please try again.");
     }
-  };
+};
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);

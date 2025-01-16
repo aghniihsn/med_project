@@ -12,7 +12,7 @@ function Register() {
     const payload = {
         name: values.name,
         email: values.email,
-        phone_number: values.no_telp, 
+        phone_number: values.phone_number, 
         password: values.password,
     };
 
@@ -100,7 +100,7 @@ function Register() {
 
           <Form.Item
             label="Phone Number"
-            name="no_telp"
+            name="phone_number"
             rules={[
               { required: true, message: 'Please input your phone number!' },
             ]}

@@ -1,110 +1,92 @@
 from flask import request
 from app import response, app, db
-from flask_jwt_extended import *
+from flask_jwt_extended import (
+    jwt_required,
+    create_access_token,
+    create_refresh_token,
+    get_jwt_identity,
+)
 from datetime import datetime, timedelta
 from app.model.user import User
-from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity,jwt_required
 
 def singleObject(data):
-    data = {
-        'id' : data.id,
-        'name' : data.name,
-        'email' : data.email,
+    return {
+        "user_id": data.user_id,
+        "name": data.name,
+        "email": data.email,
+        "phone_number": data.phone_number,
+        "created_at": data.created_at.strftime("%Y-%m-%d %H:%M:%S"),
     }
-
-    return data
 
 def login():
     try:
         data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
+        email = data.get("email")
+        password = data.get("password")
 
         if not email or not password:
-            return response.BadRequest([], 'Email dan Password wajib diisi!')
+            return response.BadRequest([], "Email dan Password wajib diisi!")
 
         user = User.query.filter_by(email=email).first()
 
         if not user:
-            return response.BadRequest([], 'Email Tidak Terdaftar')
-        
-        if not user.checkPassword(password):  
-            return response.BadRequest([], 'Kombinasi Email dan Password Salah')
-        
-        data_user = {
-            "id": user.id,
-            "name": user.name,
-            "email": user.email
-        }
+            return response.BadRequest([], "Email tidak terdaftar")
 
-        expires = timedelta(days=7)
-        refresh_expires = timedelta(days=7)
+        if not user.checkPassword(password):
+            return response.BadRequest([], "Kombinasi email dan password salah")
 
-        access_token = create_access_token(identity=data_user, fresh=True, expires_delta=expires)
-        refresh_token = create_refresh_token(identity=data_user, expires_delta=refresh_expires)
+        data_user = singleObject(user)
+        data_user['user_id'] = user.user_id
+
+        access_token = create_access_token(identity=data_user, fresh=True, expires_delta=timedelta(days=7))
+        refresh_token = create_refresh_token(identity=data_user, expires_delta=timedelta(days=7))
 
         return response.success({
             "data": data_user,
             "access_token": access_token,
             "refresh_token": refresh_token,
-        }, "Success Login!")
-    
+        }, "Berhasil login!")
     except Exception as e:
         print(f"Error saat login: {e}")
-        return response.error([], "Gagal Login")
+        return response.error([], "Gagal login")
 
-def getUserbyToken():
+@jwt_required()
+def getUserProfile():
     try:
-        data = request.get_json()
-        token = data.get('token')
-
-        if not token:
-            return response.BadRequest([], 'Token is required')
-
         current_user = get_jwt_identity()
-
-        if not current_user:
-            return response.error([], "Invalid Token", 401)
-
-        user_data = {
-            "email": current_user['email'],
-            "id": current_user['id'],
-            "full_name": current_user['name']
-        }
-        return response.success(user_data, "User authenticated successfully")
+        return response.success(current_user, "User berhasil di-autentikasi")
     except Exception as e:
         print(f"Error: {e}")
-        return response.error([], "Something went wrong", 500)
+        return response.error([], "Terjadi kesalahan saat mengambil profil user", 500)
 
 def registerUser():
     try:
         data = request.get_json()
-        name = data.get('name')
-        email = data.get('email')
-        phone_number = data.get('phone_number')
-        password = data.get('password')
+        name = data.get("name")
+        email = data.get("email")
+        phone_number = data.get("phone_number")
+        password = data.get("password")
 
         if not all([name, email, phone_number, password]):
             return response.BadRequest([], "Semua field harus diisi!")
 
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
+        if User.query.filter_by(email=email).first():
             return response.BadRequest([], "Email sudah digunakan!")
 
-        existing_phone = User.query.filter_by(no_telp=phone_number).first()
-        if existing_phone:
+        if User.query.filter_by(phone_number=phone_number).first():
             return response.BadRequest([], "Nomor telepon sudah digunakan!")
 
-        new_user = User(name=name, email=email, no_telp=phone_number)
+        new_user = User(name=name, email=email, phone_number=phone_number)
         new_user.setPassword(password)
 
         db.session.add(new_user)
         db.session.commit()
 
-        return response.success([], "User berhasil didaftarkan!")
+        return response.success(singleObject(new_user), "User berhasil didaftarkan!")
     except Exception as e:
-        print(e)
-        return response.error([], "Gagal mendaftarkan user!")
+        print(f"Error saat mendaftarkan user: {e}")
+        return response.error([], "Gagal mendaftarkan user")
+
     
 # def getUser():
     try:
