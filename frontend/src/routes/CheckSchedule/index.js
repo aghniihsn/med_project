@@ -157,14 +157,14 @@ function CheckSchedule() {
         <h1 className="title">Jadwal Minum Obat</h1>  
         <Table columns={columns} dataSource={reminders} />  
         <Modal  
-          title="Ingatkan kembali"  
+          title="Hapus"  
           visible={isModalVisible}  
           onOk={handleDelete}  
           onCancel={() => setIsModalVisible(false)}  
           okText="Ya"  
           cancelText="Batal"  
         >  
-          <p>Anda akan diingatkan kembali besok, yakin untuk melanjutkan?</p>  
+          <p>Apakah anda yakin ingin menghapus pengingat?</p>  
         </Modal>  
       </Content>  
     </Layout>  
