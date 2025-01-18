@@ -4,6 +4,7 @@ from app.controller import UserController
 from app.controller.UserController import registerUser
 from app.controller import ReminderController 
 from app.controller import NotifController
+from flask import jsonify
 
 @app.route('/')
 def index():
@@ -44,3 +45,10 @@ def reminderDetail(id):
 @app.route('/send_message', methods=['POST'])
 def send_message():
     return NotifController.send_message()
+
+@app.route('/send_notification', methods=['POST'])  
+def send_notification():  
+    data = request.json  
+    message = data.get('message')  
+    NotifController.send_notification_via_websocket(message)  
+    return jsonify({"status": "success", "message": "Notification sent via WebSocket"})   

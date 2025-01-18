@@ -8,6 +8,7 @@ from flask_jwt_extended import JWTManager
 import threading
 import schedule
 import time
+from flask_socketio import SocketIO
 
 load_dotenv()
 
@@ -18,6 +19,8 @@ jwt = JWTManager(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 CORS(app)
+
+socketio = SocketIO(app, cors_allowed_origins="*") 
 
 from app.model import user, medicine, reminder, notification
 from app import routes
@@ -31,4 +34,4 @@ scheduler_thread = threading.Thread(target=run_scheduler)
 scheduler_thread.start()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+ socketio.run(app, debug=True) 
