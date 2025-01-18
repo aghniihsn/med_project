@@ -19,6 +19,10 @@ function Dashboard() {
     navigate('/check-schedule')
   }
 
+  function handleRecord(){
+    navigate('/check-records')
+  }
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Content style={{ padding: "50px", backgroundColor: "#F2F9FF" }}>
@@ -64,7 +68,7 @@ function Dashboard() {
           </Col>
 
           <Col xs={24} sm={12} md={8} style={{ textAlign: "center" }}>
-            <div>
+            <div onClick={handleRecord}>
               <FileTextOutlined
                 style={{
                   fontSize: "48px",

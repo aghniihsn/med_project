@@ -18,6 +18,7 @@ function Header() {
       value: null,
       name: 'userData',
     });
+    alert('apakah anda yakin untuk logout?')
     navigate("/login");
   }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";  
-import { Button, Table, Modal, Layout, Form } from "antd";  
+import { Button, Table, Modal, Layout } from "antd";  
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";  
 import { useNavigate } from "react-router-dom";  
 import cookie from "../../core/helpers/cookie";
