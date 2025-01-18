@@ -18,13 +18,13 @@ def register():
 def logins():
     return UserController.login()
 
+@app.route('/api/allUser', methods=['GET'])
+def getAllUser():
+    return UserController.getAllUsers()
+
 @app.route('/user-by-token', methods = ['POST'])
 def userByToken():
     return UserController.getUserbyToken()
-
-# @app.route('/user', methods = ['GET'])
-# def getUser():
-#     return UserController.getUser()
 
 @app.route('/reminder', methods=['GET', 'POST'])
 def reminder(): 

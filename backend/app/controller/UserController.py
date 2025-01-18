@@ -88,34 +88,14 @@ def registerUser():
         return response.error([], "Gagal mendaftarkan user")
 
     
-# def getUser():
+def getAllUsers():
     try:
-        # Dekorator untuk memastikan token diverifikasi
-        @jwt_required()
-        def inner():
-            # Mendapatkan data user dari token JWT
-            current_user = get_jwt_identity()
+        users = User.query.all()
+        if not users:
+            return response.success([], "Tidak ada user yang ditemukan")
 
-            if not current_user:
-                return response.error([], "Token tidak valid atau sudah kedaluwarsa", 401)
-
-            # Query user berdasarkan ID dari token
-            user = User.query.filter_by(id=current_user['id']).first()
-
-            if not user:
-                return response.error([], "User tidak ditemukan", 404)
-
-            # Menyiapkan data user untuk response
-            user_data = {
-                "id": user.id,
-                "name": user.name,
-                "email": user.email
-            }
-
-            return response.success(user_data, "Berhasil mendapatkan data user")
-
-        return inner()
-
+        users_data = [singleObject(user) for user in users]
+        return response.success(users_data, "Berhasil mendapatkan semua user")
     except Exception as e:
-        print(f"Error: {e}")
-        return response.error([], "Gagal mendapatkan data user", 500)
+        print(f"Error saat mendapatkan semua user: {e}")
+        return response.error([], "Gagal mendapatkan semua user", 500)
