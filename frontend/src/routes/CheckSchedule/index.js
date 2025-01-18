@@ -1,45 +1,48 @@
 import React, { useEffect, useState } from "react";  
-import { Button, Table, Modal, Layout } from "antd";  
+import { Button, Table, Modal, Layout, Form } from "antd";  
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";  
 import { useNavigate } from "react-router-dom";  
-import cookie from "../../core/helpers/cookie"; // Pastikan path-nya benar
+import cookie from "../../core/helpers/cookie";
+import Update from "./component/Update";  
 const { Content } = Layout;  
-
+  
 function CheckSchedule() {  
   const navigate = useNavigate();  
-  const [reminders, setReminders] = useState([]);   
-  const [isModalVisible, setIsModalVisible] = useState(false);   
-  const [recordToDelete, setRecordToDelete] = useState(null);   
-
+  const [reminders, setReminders] = useState([]);  
+  const [isModalVisible, setIsModalVisible] = useState(false);  
+  const [recordToDelete, setRecordToDelete] = useState(null);  
+  const [recordToUpdate, setRecordToUpdate] = useState(null);  
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);  
+  
   async function fetchReminders() {  
-    const userCookie = cookie.get("user"); // Ambil cookie 'user'
+    const userCookie = cookie.get("user"); 
     if (!userCookie) {  
       console.error("User data tidak ditemukan di cookie");  
-      navigate("/login"); // Redirect ke halaman login jika user tidak ditemukan
-      return [];
-    }
-
+      navigate("/login");
+      return [];  
+    }  
+  
     try {  
       const user = JSON.parse(userCookie);  
-      const userId = user.user_id; // Ambil user_id dari cookie
-
+      const userId = user.user_id;
+  
       if (!userId) {  
         console.error("User ID tidak ditemukan dalam cookie");  
         navigate("/login");  
         return [];  
-      }
-
+      }  
+  
       const response = await fetch(`http://127.0.0.1:5000/reminder?user_id=${userId}`, {  
         method: "GET",  
         headers: {  
           "Content-Type": "application/json",  
         },  
-      });
-
+      });  
+  
       if (!response.ok) {  
         throw new Error("Failed to fetch reminders");  
-      }
-
+      }  
+  
       const data = await response.json();  
       console.log("Reminders:", data.data);  
       return data.data;  
@@ -47,8 +50,8 @@ function CheckSchedule() {
       console.error("Error fetching reminders:", error);  
       return [];  
     }  
-  }
-
+  }  
+  
   useEffect(() => {  
     async function fetchData() {  
       const data = await fetchReminders();  
@@ -63,25 +66,25 @@ function CheckSchedule() {
         }))  
       );  
     }  
-
+  
     fetchData();  
-  }, [navigate]);
-
+  }, [navigate]);  
+  
   const showDeleteModal = (record) => {  
     setRecordToDelete(record);  
     setIsModalVisible(true);  
   };  
-
+  
   const handleDelete = async () => {  
     try {  
-      await deleteReminder(recordToDelete.key);   
-      setReminders(reminders.filter(item => item.key !== recordToDelete.key));   
-      setIsModalVisible(false);   
+      await deleteReminder(recordToDelete.key);  
+      setReminders(reminders.filter(item => item.key !== recordToDelete.key));  
+      setIsModalVisible(false);  
     } catch (error) {  
       console.error("Failed to delete reminder:", error);  
     }  
   };  
-
+  
   async function deleteReminder(id) {  
     try {  
       const response = await fetch(`http://127.0.0.1:5000/reminder/${id}`, {  
@@ -89,16 +92,26 @@ function CheckSchedule() {
         headers: {  
           "Content-Type": "application/json",  
         },  
-      });
-
+      });  
+  
       if (!response.ok) {  
         throw new Error("Failed to delete reminder");  
-      }
+      }  
     } catch (error) {  
       console.error("Error deleting reminder:", error);  
     }  
-  }  
-
+  };  
+  
+  const showEditModal = (record) => {  
+    setRecordToUpdate(record);  
+    setIsEditModalVisible(true);  
+  };  
+  
+  const handleUpdate = (updatedReminder) => {  
+    setReminders(reminders.map(item => (item.key === updatedReminder.key ? updatedReminder : item)));  
+    setIsEditModalVisible(false);  
+  };  
+  
   const columns = [  
     {  
       title: "Drug Name",  
@@ -131,7 +144,7 @@ function CheckSchedule() {
       render: (_, record) => (  
         <div>  
           <Button  
-            color="danger"  
+            color="danger"
             variant="dashed"  
             className="mr-4"  
             onClick={() => showDeleteModal(record)}  
@@ -139,10 +152,10 @@ function CheckSchedule() {
             <DeleteOutlined />  
           </Button>  
           <Button  
-            color="primary"  
-            variant="dashed"  
+            color="primary"
+            variant="dashed"
             className="btn-sm btn-faint-primary ml-4"  
-            // onClick={(navigate('/update'))}  
+            onClick={() => showEditModal(record)}  
           >  
             <EditOutlined />  
           </Button>  
@@ -150,7 +163,7 @@ function CheckSchedule() {
       ),  
     },  
   ];  
-
+  
   return (  
     <Layout style={{ minHeight: "100vh" }}>  
       <Content style={{ padding: "50px", backgroundColor: "#F2F9FF" }}>  
@@ -166,9 +179,16 @@ function CheckSchedule() {
         >  
           <p>Apakah anda yakin ingin menghapus pengingat?</p>  
         </Modal>  
+        <Modal  
+          visible={isEditModalVisible}  
+          onCancel={() => setIsEditModalVisible(false)}  
+          footer={null}  
+        >  
+        {recordToUpdate && <Update reminder={recordToUpdate} onUpdate={handleUpdate} />}
+        </Modal>  
       </Content>  
     </Layout>  
   );  
 }  
-
-export default CheckSchedule;
+  
+export default CheckSchedule;  

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, notification } from 'antd';
 import { Link, useNavigate } from "react-router-dom";
 
@@ -24,6 +24,10 @@ function Header() {
   function handleLogin(){
     navigate("/login")
   }
+
+  useEffect(() => {
+    console.log(store)
+  }, [store])
   const [api, contextHolder] = notification.useNotification();
   const openNotificationWithIcon = (type) => {
     api[type]({

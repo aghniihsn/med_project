@@ -12,6 +12,7 @@ import AuthRoute from '../components/AuthRoute';
 import GuestRoute from '../components/GuestRoute';
 import LandingPage from './LandingPage'
 import Update from './CheckSchedule/component/Update';
+import Admin from './Admin/Admin'
 
 function App() {
 
@@ -83,6 +84,16 @@ function App() {
                                 <Update />
                             </React.Suspense>
                         </AuthRoute>
+                    }
+                />
+                <Route
+                    path="/admin"
+                    element={
+                        // <AuthRoute>
+                            <React.Suspense fallback={<Loading />}>
+                                <Admin />
+                            </React.Suspense>
+                        // </AuthRoute>
                     }
                 />
                 <Route path="/*" element={<NoMatch />} />
