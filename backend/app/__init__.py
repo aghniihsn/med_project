@@ -5,9 +5,9 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from dotenv import load_dotenv
 from flask_jwt_extended import JWTManager
-import threading
-import schedule
-import time
+# import threading
+# import schedule
+# import time
 from flask_socketio import SocketIO
 
 load_dotenv()
@@ -22,16 +22,21 @@ CORS(app)
 
 socketio = SocketIO(app, cors_allowed_origins="*") 
 
-from app.model import user, medicine, reminder, notification
 from app import routes
 
-def run_scheduler():
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
 
-scheduler_thread = threading.Thread(target=run_scheduler)
-scheduler_thread.start()
+# from app.model import user, medicine, reminder, notification
+
+
+# def run_scheduler():
+#     while True:
+#         schedule.run_pending()
+#         time.sleep(1)
+
+# scheduler_thread = threading.Thread(target=run_scheduler)
+# scheduler_thread.start()
+
+# socketio.init_app(app)
 
 if __name__ == '__main__':
- socketio.run(app, debug=True) 
+    socketio.run(app, debug=True) 

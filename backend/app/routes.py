@@ -1,5 +1,5 @@
 from flask import request
-from app import app
+from app import app, socketio
 from app.controller import UserController
 from app.controller.UserController import registerUser
 from app.controller import ReminderController 
@@ -16,9 +16,13 @@ def register():
 
 @app.route('/login', methods = ['POST'])
 def logins():
-    return UserController.login()
+    return UserController.login(socketio)
 
-@app.route('/api/allUser', methods=['GET'])
+@app.route("/notification/<id>", methods=['GET'])
+def getAllNotification(id):
+    return NotifController.getAll(id)
+
+@app.route('/allUser', methods=['GET'])
 def getAllUser():
     return UserController.getAllUsers()
 
@@ -32,6 +36,10 @@ def reminder():
         return ReminderController.show()
     else:
         return ReminderController.save()
+
+@app.route('/history/<id>', methods=['GET'])
+def history(id):
+    return ReminderController.history(id)
     
 @app.route('/reminder/<id>', methods=['GET', 'PUT', 'DELETE'])
 def reminderDetail(id):

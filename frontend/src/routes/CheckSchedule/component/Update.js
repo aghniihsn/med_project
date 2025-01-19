@@ -27,8 +27,8 @@ function Update({ reminder, onUpdate }) {
         try {  
             const payload = {  
                 medicine_name: values.medicine_name,  
-                dosage: values.dosage, // Pastikan ini ada  
-                frequency: values.frequency, // Pastikan ini ada  
+                dosage: values.dosage,
+                frequency: values.frequency,
                 start_date: values.start_date[0].format("YYYY-MM-DD"),  
                 end_date: values.start_date[1].format("YYYY-MM-DD"),  
                 reminder_time: values.reminder_time.format("HH:mm:ss"),  

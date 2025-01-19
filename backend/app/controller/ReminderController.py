@@ -1,8 +1,10 @@
 from app.model.reminder import Reminder  
+from app.model.notification import Notification  
 from app.model.medicine import Medicine  
 from app.model.user import User  
-from app.controller.NotifController import send_message  
+from app.controller.NotifController import send_message, send_notif
 from datetime import datetime, timedelta 
+
 from threading import Thread  
 import schedule  
 import time  
@@ -48,36 +50,145 @@ def show():
 
 def detail(id):  
     try:  
-        result = db.session.query(Reminder, Medicine).join(Medicine, Reminder.id_medicine == Medicine.id_medicine).filter(Reminder.id_reminder == id).first()  
-  
+        # Ambil data dari database dengan join antara Reminder dan Medicine
+        result = db.session.query(Reminder, Medicine).join(Medicine, Reminder.id_medicine == Medicine.id_medicine).filter(Reminder.user_id == id).all()
+        
+        # Debugging: Cetak hasil ke terminal
+        print(f"result: {result}")
+
         if not result:  
             return response.error('', 'Data tidak ditemukan')  
-  
-        reminder, medicine = result  
-        data = {  
-            'id_reminder': reminder.id_reminder,  
-            'reminder_time': reminder.reminder_time,  
-            'description': reminder.description,  
-            'medicine_name': medicine.medicine_name,  
-            'dosage': medicine.dosage,  
-            'frequency': medicine.frequency,  
-            'start_date': medicine.start_date,  
-            'end_date': medicine.end_date  
-        }  
+
+        # Proses data hasil query dan ubah menjadi format yang diinginkan
+        data = []
+        for reminder, medicine in result:
+            reminder_data = {  
+                'id_reminder': reminder.id_reminder,  
+                'reminder_time': reminder.reminder_time.strftime('%H:%M:%S') if reminder.reminder_time else None,
+                'description': reminder.description,  
+                'medicine_name': medicine.medicine_name,  
+                'dosage': medicine.dosage,  
+                'frequency': medicine.frequency,  
+                'start_date': reminder.start_date.strftime('%Y-%m-%d') if reminder.start_date else None,
+                'end_date': reminder.end_date.strftime('%Y-%m-%d') if reminder.end_date else None,
+            }
+            data.append(reminder_data)
+
+        # Debugging: Cetak data yang sudah diproses
+        print(f"Processed data: {data}")
   
         return response.success(data, 'Sukses Mengambil Detail Data')  
+  
     except Exception as e:  
         print(e)  
-        return response.error('', 'Gagal Mengambil Detail Data')  
+        return response.error('', 'Gagal Mengambil Detail Data')
+
+
+def combine_date_time(date_str, time_str):
+    try:
+        combined = f"{date_str} {time_str}"
+        result = datetime.strptime(combined, "%Y-%m-%d %H:%M:%S")
+        return result
+    except ValueError as e:
+        print(f"Error combining date and time: {e}")
+        return None
+
+# def detail(id):  
+#     try:  
+#         result = db.session.query(Reminder, Medicine).join(Medicine, Reminder.id_medicine == Medicine.id_medicine).filter(Reminder.id_reminder == id).first()  
+#         print (result).format()
+#         if not result:  
+#             return response.error('', 'Data tidak ditemukan')  
   
-def schedule_reminders(reminder_time, frequency, token, target, message):  
+#         reminder, medicine = result  
+#         data = {  
+#             'id_reminder': reminder.id_reminder,  
+#             'reminder_time': reminder.reminder_time,  
+#             'description': reminder.description,  
+#             'medicine_name': medicine.medicine_name,  
+#             'dosage': medicine.dosage,  
+#             'frequency': medicine.frequency,  
+#             'start_date': medicine.start_date,  
+#             'end_date': medicine.end_date  
+#         }  
+  
+#         return response.success(data, 'Sukses Mengambil Detail Data')  
+#     except Exception as e:  
+#         print(e)  
+#         return response.error('', 'Gagal Mengambil Detail Data')  
+
+def history(user_id):  
+    try:  
+        results = (
+            db.session.query(Reminder, Medicine)
+            .join(Medicine, Reminder.id_medicine == Medicine.id_medicine)
+            .filter(Reminder.user_id == user_id)
+            .all()
+        )        
+        print(f"result: {results}")
+
+        if not results:  
+            return response.error('', 'Data tidak ditemukan')  
+
+        current_datetime = datetime.now()
+
+        formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+        today = datetime.strptime(formatted_datetime, "%Y-%m-%d %H:%M:%S")
+
+        data = []
+        for reminder, medicine in results:
+            threshold_datetime = combine_date_time(reminder.end_date, reminder.reminder_time)
+            
+            if not threshold_datetime:
+                continue
+
+            print(f"threshold_datetime: {threshold_datetime}")
+            print(f"threshold_datetime: {today}")
+
+            if threshold_datetime > today:
+                continue
+
+            reminder_data = {  
+                'id_reminder': reminder.id_reminder,  
+                'reminder_time': reminder.reminder_time.strftime('%H:%M:%S') if reminder.reminder_time else None,
+                'description': reminder.description,  
+                'medicine_name': medicine.medicine_name,  
+                'dosage': medicine.dosage,  
+                'frequency': medicine.frequency,  
+                'start_date': reminder.start_date.strftime('%Y-%m-%d') if reminder.start_date else None,
+                'end_date': reminder.end_date.strftime('%Y-%m-%d') if reminder.end_date else None,
+            }
+            data.append(reminder_data)
+
+        print(f"Processed data: {data}")
+  
+        return response.success(data, 'Sukses Mengambil Detail Data')  
+  
+    except Exception as e:  
+        print(e)  
+        return response.error('', 'Gagal Mengambil Detail Data')
+
+def schedule_reminders(reminder_time, frequency, token, target, message, id_reminder, user_id):  
     interval = 24 * 60 // frequency  
     for i in range(frequency):  
         reminder_datetime = reminder_time + timedelta(minutes=i * interval)  
         schedule_time = reminder_datetime.strftime('%H:%M')  
         print(f"Scheduling message for {schedule_time}")  
-        schedule.every().day.at(schedule_time).do(lambda t=token, tg=target, msg=message: send_message(t, tg, msg))  
-  
+
+        try:
+            medicine = Notification(  
+                message=message, 
+                id_reminder=id_reminder, 
+                user_id=user_id  
+            )  
+            db.session.add(medicine)  
+            db.session.commit()
+            schedule.every().day.at(schedule_time).do(lambda t=token, tg=target, msg=message: send_message(t, tg, msg)).tag(id_reminder)
+            send_notif(token, target, message)
+        except Exception as e:  
+            print(e)  
+            db.session.rollback()  
+
 def save():  
     try:  
         data = request.json  
@@ -118,7 +229,7 @@ def save():
         db.session.add(reminder)  
         db.session.commit()  
   
-        schedule_reminders(reminder_time, frequency, token, target, message)  
+        schedule_reminders(reminder_time, frequency, token, target, message, reminder.id_reminder, user_id)  
   
         return jsonify({"status": "success", "message": "Sukses Menambahkan Data Reminder dan Medicine"})  
     except Exception as e:  
@@ -162,13 +273,13 @@ def ubah(id_reminder):
             medicine.end_date = datetime.strptime(end_date, '%Y-%m-%d')  
 
         if reminder_time or frequency:  
-            schedule.clear()
             token = "YGgTRnVANIrkxEc3lOCqjLUyMuSHhwdK84bD09po"  
             target = User.query.get(reminder.user_id).phone_number  
             message = "Ini adalah pesan dari Health Mate -- Waktunya Minum Obat Jangan Sampai Terlambat!"
             
             reminder_datetime = datetime.strptime(reminder_time, '%H:%M:%S')  
-            schedule_reminders(reminder_datetime, int(frequency), token, target, message)  
+            schedule.clear(id_reminder)
+            schedule_reminders(reminder_datetime, int(frequency), token, target, message, id_reminder)  
 
         db.session.commit()  
         return response.success('', 'Sukses Mengupdate Data Reminder dan Medicine')  

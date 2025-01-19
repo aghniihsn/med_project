@@ -163,12 +163,18 @@ function CheckSchedule() {
       ),  
     },  
   ];  
-  
+
+  function handleBack(){
+    navigate("/dashboard")
+  }
   return (  
     <Layout style={{ minHeight: "100vh" }}>  
       <Content style={{ padding: "50px", backgroundColor: "#F2F9FF" }}>  
         <h1 className="title">Jadwal Minum Obat</h1>  
         <Table columns={columns} dataSource={reminders} />  
+        <Button color="primary" variant="filled" onClick={handleBack}>    
+            Back    
+        </Button>  
         <Modal  
           title="Hapus"  
           visible={isModalVisible}  

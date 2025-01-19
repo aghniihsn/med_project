@@ -1,7 +1,45 @@
-from flask import jsonify
+from app import db, response, socketio
+from app.model.notification import Notification  
+
+from app.model.medicine import Medicine  
 import requests
-from flask_socketio import emit  
-from app import socketio 
+
+def getAll(id):  
+    try:  
+        # Ambil data dari database dengan join antara Reminder dan Medicine
+        result = db.session.query(Notification).filter(Notification.user_id == id).all()
+        
+        # Debugging: Cetak hasil ke terminal
+        print(f"result: {result}")
+
+        if not result:  
+            return response.error('', 'Data tidak ditemukan')  
+
+        # Proses data hasil query dan ubah menjadi format yang diinginkan
+        data = []
+        for notification in result:
+            new_notif = {  
+                    "id_notification": notification.id_notification,
+                    "message": notification.message,
+                    "created_at": notification.created_at.strftime('%Y-%m-%d %H:%M:%S') if notification.created_at else None
+            }
+            data.append(new_notif)
+
+        print(f"Notification data: {data}")
+
+        return response.success(data, 'Sukses Mengambil Detail Data')  
+
+    except Exception as e:  
+        print(e)  
+        return response.error('', 'Gagal Mengambil Detail Data')
+
+
+def send_notif(token, target, message):
+    try:
+       socketio.emit("notification", message)
+    except requests.exceptions.RequestException as e:
+        print(f"Error sending notif: {str(e)}")
+        return {"error": str(e)}
 
 def send_message(token, target, message):
     print(f"Sending message to {target}: {message}")  # Debugging
