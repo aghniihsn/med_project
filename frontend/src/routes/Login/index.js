@@ -41,7 +41,13 @@ function Login() {
                     value: JSON.parse(cookieUser),
                 });
             }
-            navigate("/dashboard");
+            if(userData.user_id == 400) {
+              navigate("/admin");
+
+            } else {
+              navigate("/dashboard");
+
+            }
         } else {
             console.error("Login failed:", result);
             alert(result.message || "Login failed!");

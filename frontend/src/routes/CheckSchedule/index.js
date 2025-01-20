@@ -50,23 +50,25 @@ function CheckSchedule() {
       console.error("Error fetching reminders:", error);  
       return [];  
     }  
+  } 
+  
+  async function fetchData() {  
+    const data = await fetchReminders();  
+    setReminders(  
+      data.map((item) => ({  
+        key: item.id_reminder,  
+        dosage: item.dosage,  
+        frequency: item.frequency,  
+        medicine_name: item.medicine_name,  
+        reminder_time: item.reminder_time,  
+        start_date: item.start_date,  
+        end_date: item.end_date,  
+        description: item.description,  
+      }))  
+    );  
   }  
   
-  useEffect(() => {  
-    async function fetchData() {  
-      const data = await fetchReminders();  
-      setReminders(  
-        data.map((item) => ({  
-          key: item.id_reminder,  
-          medicine_name: item.medicine_name,  
-          reminder_time: item.reminder_time,  
-          start_date: item.start_date,  
-          end_date: item.end_date,  
-          description: item.description,  
-        }))  
-      );  
-    }  
-  
+  useEffect(() => {    
     fetchData();  
   }, [navigate]);  
   
@@ -108,8 +110,8 @@ function CheckSchedule() {
   };  
   
   const handleUpdate = (updatedReminder) => {  
-    setReminders(reminders.map(item => (item.key === updatedReminder.key ? updatedReminder : item)));  
     setIsEditModalVisible(false);  
+    fetchData()
   };  
   
   const columns = [  

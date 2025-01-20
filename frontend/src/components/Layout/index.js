@@ -22,39 +22,18 @@ function Layout() {
     })
   }
 
-  // outside of your component, initialize the socket variable
-  let socket;
-
   const cookieUser = cookie.get("user");
   useEffect(() => {
     if (cookieUser && !userData) {
+      const data = JSON.parse(cookieUser)
       dispatch({
         type: "update",
         name: "userData",
-        value: JSON.parse(cookieUser),
+        value: data,
       });
+      
     }
   }, [cookieUser]);
-
-  useEffect(() => {
-
-    // create websocket/connect
-    socket = io("http://127.0.0.1:5000");
-
-    // listen for chat events
-    socket.on("notification", (chat) => {
-      dispatch({
-        type: "update",
-        name: "notification",
-        value: chat,
-      });
-    })
-
-    // when component unmounts, disconnect
-    return (() => {
-      socket.disconnect()
-    })
-  }, [])
 
   if (!userData) {
     return (

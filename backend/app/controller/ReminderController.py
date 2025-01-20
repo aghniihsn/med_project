@@ -169,25 +169,27 @@ def history(user_id):
         return response.error('', 'Gagal Mengambil Detail Data')
 
 def schedule_reminders(reminder_time, frequency, token, target, message, id_reminder, user_id):  
-    interval = 24 * 60 // frequency  
-    for i in range(frequency):  
-        reminder_datetime = reminder_time + timedelta(minutes=i * interval)  
-        schedule_time = reminder_datetime.strftime('%H:%M')  
-        print(f"Scheduling message for {schedule_time}")  
+    # interval = 24 * 60 // frequency  
+    # for i in range(frequency):  
+    #     reminder_datetime = reminder_time + timedelta(minutes=i * interval)  
+    #     print(f"Scheduling message for {reminder_datetime}")  
 
-        try:
-            medicine = Notification(  
-                message=message, 
-                id_reminder=id_reminder, 
-                user_id=user_id  
-            )  
-            db.session.add(medicine)  
-            db.session.commit()
-            schedule.every().day.at(schedule_time).do(lambda t=token, tg=target, msg=message: send_message(t, tg, msg)).tag(id_reminder)
-            
-        except Exception as e:  
-            print(e)  
-            db.session.rollback()  
+    schedule_time = reminder_time[:5]
+    print(f"Scheduling message for {schedule_time}")  
+
+    try:
+        medicine = Notification(  
+            message=message, 
+            id_reminder=id_reminder, 
+            user_id=user_id  
+        )  
+        db.session.add(medicine)  
+        db.session.commit()
+        schedule.every().day.at(schedule_time).do(lambda t=token, tg=target, msg=message: send_message(t, tg, msg)).tag(id_reminder)
+        
+    except Exception as e:  
+        print(e)  
+        db.session.rollback()  
 
 def save():  
     try:  
@@ -204,7 +206,7 @@ def save():
         if user is None:  
             return jsonify({"status": "error", "message": "User not found"}), 404  
   
-        reminder_time = datetime.strptime(reminder_time_str, '%Y-%m-%d %H:%M:%S')  
+        reminder_time = datetime.strptime(reminder_time_str, '%H:%M:%S')  
         message = "Ini adalah pesan dari Health Mate -- Waktunya Minum Obat Jangan Sampai Terlambat!"    
         token = "YGgTRnVANIrkxEc3lOCqjLUyMuSHhwdK84bD09po"  
         target = user.phone_number
@@ -232,7 +234,7 @@ def save():
         db.session.commit()  
   
         print(f"result message for {reminder.id_reminder}")  
-        schedule_reminders(reminder_time, frequency, token, target, message, reminder.id_reminder, user_id)  
+        schedule_reminders(reminder_time_str, frequency, token, target, message, reminder.id_reminder, user_id)  
   
         return jsonify({"status": "success", "message": "Sukses Menambahkan Data Reminder dan Medicine"})  
     except Exception as e:  
@@ -240,58 +242,60 @@ def save():
         db.session.rollback()  
         return jsonify({"status": "error", "message": "Gagal Menambahkan Data Reminder dan Medicine"})  
 
-def ubah(id_reminder):  
-    try:  
-        data = request.json  
-        reminder = Reminder.query.filter_by(id_reminder=id_reminder).first()  
-        if not reminder:  
-            return response.error('', 'Data Reminder tidak ditemukan')  
+def ubah(id_reminder):    
+    try:    
+        data = request.json    
+        reminder = Reminder.query.filter_by(id_reminder=id_reminder).first()    
+        if not reminder:    
+            return jsonify({"status": "error", "message": "Data Reminder tidak ditemukan"}), 404    
 
-        medicine = Medicine.query.filter_by(id_medicine=reminder.id_medicine).first()  
-        if not medicine:  
-            return response.error('', 'Data Medicine tidak ditemukan')  
+        medicine = Medicine.query.filter_by(id_medicine=reminder.id_medicine).first()    
+        if not medicine:    
+            return jsonify({"status": "error", "message": "Data Medicine tidak ditemukan"}), 404    
 
-        reminder_time = data.get('reminder_time')  
-        description = data.get('description')  
-        medicine_name = data.get('medicine_name')  
-        dosage = data.get('dosage')  
-        frequency = data.get('frequency')  
-        start_date = data.get('start_date')  
-        end_date = data.get('end_date')  
+        reminder_time_str = data.get('reminder_time')    
+        description = data.get('description')    
+        medicine_name = data.get('medicine_name')    
+        dosage = data.get('dosage')    
+        frequency = int(data.get('frequency')) if data.get('frequency') else medicine.frequency    
+        start_date = data.get('start_date')    
+        end_date = data.get('end_date')    
 
-        if reminder_time:  
-            reminder.reminder_time = datetime.strptime(reminder_time, '%H:%M:%S')  
-        if description:  
-            reminder.description = description  
+        if reminder_time_str:    
+            reminder.reminder_time = datetime.strptime(reminder_time_str, '%H:%M:%S')    
+        if description:    
+            reminder.description = description    
+        if start_date:    
+            reminder.start_date = start_date 
+        if end_date:    
+            reminder.end_date = end_date   
 
-        if medicine_name:  
-            medicine.medicine_name = medicine_name  
-        if dosage:  
-            medicine.dosage = dosage  
-        if frequency:  
-            medicine.frequency = frequency  
-        if start_date:  
-            medicine.start_date = datetime.strptime(start_date, '%Y-%m-%d')  
-        if end_date:  
-            medicine.end_date = datetime.strptime(end_date, '%Y-%m-%d')  
+        if medicine_name:    
+            medicine.medicine_name = medicine_name    
+        if dosage:    
+            medicine.dosage = dosage    
+        if frequency:    
+            medicine.frequency = frequency    
 
-        if reminder_time or frequency:  
-            token = "YGgTRnVANIrkxEc3lOCqjLUyMuSHhwdK84bD09po"  
-            target = User.query.get(reminder.user_id).phone_number  
-            message = "Ini adalah pesan dari Health Mate -- Waktunya Minum Obat Jangan Sampai Terlambat!"
-            
-            reminder_datetime = datetime.strptime(reminder_time, '%H:%M:%S')  
-            schedule.clear(id_reminder)
-            schedule_reminders(reminder_datetime, int(frequency), token, target, message, id_reminder)  
+        # Update the reminder and medicine in the database  
+        db.session.commit()
 
-        db.session.commit()  
-        return response.success('', 'Sukses Mengupdate Data Reminder dan Medicine')  
+        # Reschedule reminders if necessary  
+        if reminder_time_str or frequency:    
+            token = "YGgTRnVANIrkxEc3lOCqjLUyMuSHhwdK84bD09po"    
+            target = User.query.get(reminder.user_id).phone_number    
+            message = "Ini adalah pesan dari Health Mate -- Waktunya Minum Obat Jangan Sampai Terlambat!"  
 
-    except Exception as e:  
-        print(f"Error saat mengupdate data: {e}")  
-        db.session.rollback()  
-        return response.error('', 'Gagal Mengupdate Data Reminder dan Medicine')  
-  
+            schedule.clear(id_reminder)  # Clear the existing schedule  
+            schedule_reminders(reminder_time_str, frequency, token, target, message, id_reminder, reminder.user_id)    
+
+        return jsonify({"status": "success", "message": "Sukses Mengupdate Data Reminder dan Medicine"})    
+
+    except Exception as e:    
+        print(f"Error saat mengupdate data: {e}")    
+        db.session.rollback()    
+        return jsonify({"status": "error", "message": "Gagal Mengupdate Data Reminder dan Medicine"})
+    
 def hapus(id_reminder):  
     try:  
         reminder = Reminder.query.filter_by(id_reminder=id_reminder).first()  

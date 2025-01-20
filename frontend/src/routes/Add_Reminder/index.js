@@ -42,7 +42,7 @@ function AddReminder() {
         const reminderDate = values.reminder_time.toDate();
         const reminderTime = values.reminder_time.format("HH:mm:ss");
         const formattedReminderDate = moment(reminderDate).format("YYYY-MM-DD");
-        const formattedReminderTime = `${formattedReminderDate} ${reminderTime}`;
+        const formattedReminderTime = `${reminderTime}`;
     
         const payload = {
             medicine_name: values.medicine_name,

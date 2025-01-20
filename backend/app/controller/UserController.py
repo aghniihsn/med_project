@@ -92,12 +92,26 @@ def registerUser():
     
 def getAllUsers():
     try:
-        users = User.query.all()
-        if not users:
-            return response.success([], "Tidak ada user yang ditemukan")
+        # users = User.query.all()
+        # if not users:
+        #     return response.success([], "Tidak ada user yang ditemukan")
 
-        users_data = [singleObject(user) for user in users]
-        return response.success(users_data, "Berhasil mendapatkan semua user")
+        # users_data = [singleObject(user) for user in users]
+        # return response.success(users_data, "Berhasil mendapatkan semua user")
+        results = (
+            db.session.query(User)
+            .all()
+        )
+
+        data = []
+        for user in results:
+            data.append({
+                'name': user.name,
+                'email': user.email,
+                'phone_number': user.phone_number,
+            })
+
+        return response.success(data, 'Sukses Mengambil Data')
     except Exception as e:
         print(f"Error saat mendapatkan semua user: {e}")
         return response.error([], "Gagal mendapatkan semua user", 500)

@@ -100,11 +100,11 @@ function App() {
                 <Route
                     path="/admin"
                     element={
-                        // <AuthRoute>
+                        <AuthRoute>
                             <React.Suspense fallback={<Loading />}>
                                 <Admin />
                             </React.Suspense>
-                        // </AuthRoute>
+                        </AuthRoute>
                     }
                 />
                 <Route path="/*" element={<NoMatch />} />

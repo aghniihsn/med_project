@@ -7,7 +7,7 @@ const Admin = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/allUser', {
+      const response = await fetch('http://127.0.0.1:5000/allUser', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -18,7 +18,11 @@ const Admin = () => {
       const result = await response.json();
 
       if (response.ok) {
-        setUsers(result.data); 
+        setUsers(  
+          result.data.map((item) => ({  
+            key: item.email,  
+            ...item
+          }))); 
         // message.success('Users fetched successfully');
       } else {
         message.error(result.message || 'Failed to fetch users');
@@ -71,7 +75,7 @@ const Admin = () => {
   return (
     <Table
       columns={columns}
-      dataSource={users.map((user) => ({ ...user, key: user.user_id }))}
+      dataSource={users}
       loading={loading}
     />
   );

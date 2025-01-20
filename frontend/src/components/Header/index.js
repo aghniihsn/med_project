@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Badge, Button, List, notification, Popover } from 'antd';
+import { io } from 'socket.io-client';
 import { BellOutlined } from '@ant-design/icons'
 import { Link, useNavigate } from "react-router-dom";
 
@@ -7,11 +8,16 @@ import useLocalData from "../../core/hook/useLocalData";
 import cookie from "../../core/helpers/cookie";
 import "./style.css";
 
+
+  // outside of your component, initialize the socket variable
+  let socket;
+
 function Header() {
   const { store, dispatch } = useLocalData();
   const userData = store.userData;
   const navigate = useNavigate()
   const [notif, setNotif] = useState()
+  console.log("header cuy", userData)
 
   function handleLogout() {
     cookie.del('user');
@@ -21,6 +27,11 @@ function Header() {
       name: 'userData',
     });
     alert('apakah anda yakin untuk logout?')
+    if(socket) {
+      console.log("diskonek"); 
+      socket.disconnect(); 
+      socket = null
+    } 
     navigate("/login");
   }
 
@@ -32,13 +43,13 @@ function Header() {
   const openNotificationWithIcon = () => {
     api.info({
       message: 'Reminder',
-      description:store.notification,
+      description: store.notification,
     });
   };
 
   const getNotificationList = async () => {
-    const userId = cookie.get("user")?.id; 
-    if (!userId) return; 
+    const userId = cookie.get("user")?.id;
+    if (!userId) return;
     const response = await fetch(`http://localhost:5000/notification/${userId}`, {
       method: "GET",
       headers: {
@@ -48,7 +59,7 @@ function Header() {
     const result = await response.json();
     setNotif(result);
   };
-  
+
 
   const cookieUser = cookie.get("user");
   // useEffect(() => {
@@ -60,6 +71,26 @@ function Header() {
   //     });
   //   }
   // }, [cookieUser]);
+
+  useEffect(() => {
+    if (cookieUser && userData) {
+
+      if(userData?.user_id != 400 && !socket) {
+        // create websocket/connect
+        socket = io("http://127.0.0.1:5000");
+  
+        // listen for chat events
+        socket.on("notification", (chat) => {
+          dispatch({
+            type: "update",
+            name: "notification",
+            value: chat,
+          });
+        })
+      }
+      
+    }
+  }, [cookieUser]);
 
   useMemo(() => {
     getNotificationList()
@@ -95,17 +126,24 @@ function Header() {
                   </List.Item>
                 )}
               />} title="Title" trigger="click">
-                <Badge
+                {/* <Badge
                   className="site-badge-count-109"
                   // count={10}
                   style={{ backgroundColor: '#52c41a' }}
                 >
                   <Button size="small" shape="circle" icon={<BellOutlined />} />
 
-                </Badge>
+                </Badge> */}
               </Popover>
-              <Link to="/dashboard">Home</Link>
-              <Link to="/profile">Profile</Link>
+
+              {
+                userData?.user_id != 400 && (
+                  <>
+                    <Link to="/dashboard">Home</Link>
+                    <Link to="/profile">Profile</Link>
+                  </>
+                )
+              }
 
               <button onClick={handleLogout}>Logout</button>
             </>
