@@ -57,6 +57,7 @@ def send_message(token, target, message):
     try:
         response = requests.post(url, json=payload, headers=headers)
         response.raise_for_status()
+        send_notif(token, target, message)
         return response.json()  # Mengembalikan respons dari API
     except requests.exceptions.RequestException as e:
         print(f"Error sending message: {str(e)}")

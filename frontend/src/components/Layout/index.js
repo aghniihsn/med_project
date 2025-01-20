@@ -43,11 +43,10 @@ function Layout() {
 
     // listen for chat events
     socket.on("notification", (chat) => {
-      console.log("form notif", chat)
       dispatch({
         type: "update",
         name: "notification",
-        value: JSON.parse(cookieUser),
+        value: chat,
       });
     })
 

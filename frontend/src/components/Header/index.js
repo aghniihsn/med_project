@@ -29,11 +29,10 @@ function Header() {
   }
 
   const [api, contextHolder] = notification.useNotification();
-  const openNotificationWithIcon = (type) => {
-    api[type]({
-      message: 'Notification Title',
-      description:
-        'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+  const openNotificationWithIcon = () => {
+    api.info({
+      message: 'Reminder',
+      description:store.notification,
     });
   };
 
@@ -67,7 +66,7 @@ function Header() {
   }, [cookieUser])
 
   useEffect(() => {
-    if (store.notification) openNotificationWithIcon("success")
+    if (store.notification) openNotificationWithIcon()
   }, [store.notification])
   return (
     <header>
@@ -98,7 +97,7 @@ function Header() {
               />} title="Title" trigger="click">
                 <Badge
                   className="site-badge-count-109"
-                  count={10}
+                  // count={10}
                   style={{ backgroundColor: '#52c41a' }}
                 >
                   <Button size="small" shape="circle" icon={<BellOutlined />} />

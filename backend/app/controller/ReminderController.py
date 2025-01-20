@@ -2,7 +2,7 @@ from app.model.reminder import Reminder
 from app.model.notification import Notification  
 from app.model.medicine import Medicine  
 from app.model.user import User  
-from app.controller.NotifController import send_message, send_notif
+from app.controller.NotifController import send_message
 from datetime import datetime, timedelta 
 
 from threading import Thread  
@@ -184,7 +184,7 @@ def schedule_reminders(reminder_time, frequency, token, target, message, id_remi
             db.session.add(medicine)  
             db.session.commit()
             schedule.every().day.at(schedule_time).do(lambda t=token, tg=target, msg=message: send_message(t, tg, msg)).tag(id_reminder)
-            send_notif(token, target, message)
+            
         except Exception as e:  
             print(e)  
             db.session.rollback()  
@@ -226,9 +226,12 @@ def save():
             id_medicine=medicine.id_medicine,
             user_id=user_id  
         )  
-        db.session.add(reminder)  
+        db.session.add(reminder)
+
+
         db.session.commit()  
   
+        print(f"result message for {reminder.id_reminder}")  
         schedule_reminders(reminder_time, frequency, token, target, message, reminder.id_reminder, user_id)  
   
         return jsonify({"status": "success", "message": "Sukses Menambahkan Data Reminder dan Medicine"})  
