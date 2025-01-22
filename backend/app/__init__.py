@@ -12,31 +12,36 @@ from flask_socketio import SocketIO
 
 load_dotenv()
 
-app = Flask(__name__)
-app.config.from_object(Config)
+jwt = JWTManager()
+db = SQLAlchemy()
+migrate = Migrate()
+socketio = SocketIO(cors_allowed_origins="*") 
 
-jwt = JWTManager(app)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-CORS(app)
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-socketio = SocketIO(app, cors_allowed_origins="*") 
+    CORS(app)
 
-from app import routes
+    jwt.init_app(app)
+    db.init_app(app)
+    migrate.init_app(app, db)
+    socketio.init_app(app)
+
+    from app.routes import main
+
+    app.register_blueprint(main)
+
+    from app.model import user, medicine, reminder, notification
+
+    def run_scheduler():
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
+    scheduler_thread = threading.Thread(target=run_scheduler)
+    scheduler_thread.start()
+
+    return app
 
 
-# from app.model import user, medicine, reminder, notification
-
-
-def run_scheduler():
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
-
-scheduler_thread = threading.Thread(target=run_scheduler)
-scheduler_thread.start()
-
-# socketio.init_app(app)
-
-if __name__ == '__main__':
-    socketio.run(app, debug=True) 

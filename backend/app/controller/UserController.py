@@ -1,5 +1,5 @@
 from flask import request
-from app import response, app, db
+from app import response, db
 # from flask_socketio import SocketIO, emit  
 
 from flask_jwt_extended import (
@@ -62,6 +62,7 @@ def getUserProfile():
         return response.error([], "Terjadi kesalahan saat mengambil profil user", 500)
 
 def registerUser():
+    print("register user")
     try:
         data = request.get_json()
         name = data.get("name")

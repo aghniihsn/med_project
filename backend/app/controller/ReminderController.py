@@ -9,7 +9,7 @@ from threading import Thread
 import schedule  
 import time  
   
-from app import response, app, db  
+from app import response, db  
 from flask import request, jsonify  
   
 def run_schedule():  
